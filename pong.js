@@ -66,9 +66,9 @@ function getRandomBlockType() {
 
 // Modifizierte Funktion zum Erstellen eines neuen Blocks
 function createRandomBlock() {
-  const blockType = getRandomBlockType();
+  // const blockType = getRandomBlockType();
   // const blockType = 'square';
-  // const blockType = 'line';
+  const blockType = "line";
   // const blockType = 'l-block';
   // const blockType = 'reverse-l-block';
   // const blockType = 't-block';
@@ -82,6 +82,7 @@ function createBlock(type) {
   const blockWidth = 40;
   const blockHeight = 40;
   let parts = [];
+  const friction = 1;
 
   switch (type) {
     case "square":
@@ -101,17 +102,15 @@ function createBlock(type) {
     case "line":
       console.log("Line-Block");
       parts = [
-        Bodies.rectangle(x, y, blockWidth, blockHeight, {
-          render: { fillStyle: "red" },
-        }),
+        Bodies.rectangle(x, y, blockWidth, blockHeight, { friction: friction }),
         Bodies.rectangle(x, y + 1 + blockHeight, blockWidth, blockHeight, {
-          render: { fillStyle: "red" },
+          friction: friction,
         }),
         Bodies.rectangle(x, y + 1 + 2 * blockHeight, blockWidth, blockHeight, {
-          render: { fillStyle: "red" },
+          friction: friction,
         }),
         Bodies.rectangle(x, y + 1 + 3 * blockHeight, blockWidth, blockHeight, {
-          render: { fillStyle: "red" },
+          friction: friction,
         }),
       ];
       break;
@@ -189,6 +188,7 @@ function createBlock(type) {
 
   block.isControllable = true;
   block.hasCollided = false;
+  block.mass = 1;
   World.add(engine.world, [block]);
   blocks.push(block);
   return block;
@@ -204,10 +204,16 @@ document.addEventListener("keydown", (event) => {
   const { keyCode } = event;
   switch (keyCode) {
     case 37: // Linke Pfeiltaste
-      Body.applyForce(currentBlock, currentBlock.position, { x: -0.01, y: 0 });
+      Body.setPosition(currentBlock, {
+        x: currentBlock.position.x - 5,
+        y: currentBlock.position.y,
+      });
       break;
     case 39: // Rechte Pfeiltaste
-      Body.applyForce(currentBlock, currentBlock.position, { x: 0.01, y: 0 });
+      Body.setPosition(currentBlock, {
+        x: currentBlock.position.x + 5,
+        y: currentBlock.position.y,
+      });
       break;
     case 38: // Pfeiltaste nach oben
       Body.rotate(currentBlock, -Math.PI / 2); // Drehen gegen den Uhrzeigersinn
@@ -250,6 +256,10 @@ Events.on(engine, "collisionStart", (event) => {
           if (block.position.y <= 20) {
             spawnBlocks = false; // Deaktivieren des Block-Spawnings
           }
+
+          // Hier die masse ändern;
+          // const newMass = block.mass * 10; // Beispiel: Verdopple die Masse
+          // Body.setMass(block, newMass);
 
           if (block === currentBlock && spawnBlocks) {
             console.log("Ein fallender Block hat die Plattform berührt.");
