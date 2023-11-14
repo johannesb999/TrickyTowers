@@ -1,5 +1,3 @@
-// Importieren der matter.js-Bibliothek
-
 const { Engine, Render, World, Bodies, Body, Events } = Matter;
 
 // Globale Variable für die Fallgeschwindigkeit
@@ -286,13 +284,35 @@ Events.on(engine, "collisionStart", (event) => {
   });
 });
 
-// ...
+function test(value, startLow, startHigh, endLow, endHigh, reverse) {
+  let cache;
+  if (reverse) {
+    cache =
+      ((startHigh - value) / Math.abs(startHigh - startLow)) *
+        Math.abs(endHigh - endLow) +
+      endLow;
+  } else {
+    cache =
+      ((value - startLow) / Math.abs(startHigh - startLow)) *
+        Math.abs(endHigh - endLow) +
+      endLow;
+  }
+  if (cache < 0) {
+    cache = 0;
+  } else if (cache > 500) {
+    cache = 500;
+  }
+  return cache;
+}
 
 function updateBlockPosition() {
   if (currentBlock && currentBlock.isControllable) {
+    // console.log("Yes");
+    test(palmBaseCenterX, 0, 1, 800, 0, false);
+    console.log(palmBaseCenterX);
     // Verwenden Sie die Handposition, um die X-Position des Blocks zu setzen
     Body.setPosition(currentBlock, {
-      x: hand.palmBaseCenterX,
+      x: palmBaseCenterX,
     });
 
     // Optional: weitere Steuerungen basierend auf Gesten oder Bewegungen
@@ -303,7 +323,10 @@ function updateBlockPosition() {
 (function run() {
   Engine.update(engine, 1000 / 60);
   Render.world(render);
-  //   updateBlockPosition(); // Aktualisiert die Position des Blocks basierend auf der Handposition
+  //   console.log(vneiwdjlfdgswopg);
+  if (vneiwdjlfdgswopg) {
+    updateBlockPosition(); // Aktualisiert die Position des Blocks basierend auf der Handposition
+  }
 
   requestAnimationFrame(run);
 })();

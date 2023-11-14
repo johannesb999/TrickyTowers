@@ -1,8 +1,3 @@
-let palmBaseCenterX = 1; // Globale Variable
-// export const hand = {
-//   return: palmBaseCenterX,
-// };
-
 import {
   GestureRecognizer,
   FilesetResolver,
@@ -67,7 +62,7 @@ async function handleClick(event) {
   }
 
   const results = gestureRecognizer.recognize(event.target);
-  console.log(results);
+  // console.log(results);
 
   if (results.gestures.length > 0) {
     const p = event.target.parentNode.childNodes[3];
@@ -153,9 +148,10 @@ function enableCam(event) {
     alert("Please wait for gestureRecognizer to load");
     return;
   }
-
+  // let vneiwdjlfdgswopg = false;
   if (webcamRunning === true) {
     webcamRunning = false;
+    // vneiwdjlfdgswopg = false;
     enableWebcamButton.innerText = "ENABLE PREDICTIONS";
   } else {
     webcamRunning = true;
@@ -171,6 +167,7 @@ function enableCam(event) {
   navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
     video.srcObject = stream;
     video.addEventListener("loadeddata", predictWebcam);
+    vneiwdjlfdgswopg = true;
   });
 }
 
@@ -228,7 +225,11 @@ async function predictWebcam() {
     21: "#000000", // Schwarz für die zweiundzwanzigste Landmarke
   };
   if (results.landmarks) {
-    const palmBasePoints = results.landmarks[0].slice(0, 5);
+    // console.log("Erkannte Landmarken:", results.landmarks);
+    let palmBasePoints;
+    if (results.landmarks && results.landmarks[0]) {
+      palmBasePoints = results.landmarks[0].slice(0, 5);
+    }
     const palmBaseCenterX = calculatePalmBaseCenter(palmBasePoints);
 
     results.landmarks.forEach((landmarks) => {
@@ -248,10 +249,10 @@ async function predictWebcam() {
           color: color,
           lineWidth: 1,
         });
-        console.log(`Landmarke ${index} (${color}):`, landmark);
+        // console.log(`Landmarke ${index} (${color}):`, landmark);
       });
     });
-    console.log(`Mittelpunkt des Handballens (X-Achse): ${palmBaseCenterX}`);
+    // console.log(`Mittelpunkt des Handballens (X-Achse): ${palmBaseCenterX}`);
   }
 
   canvasCtx.restore();
@@ -274,7 +275,7 @@ async function predictWebcam() {
   if (webcamRunning === true) {
     window.requestAnimationFrame(predictWebcam);
   }
-  console.log(results.landmarks);
+  // console.log(results.landmarks);
   //////////////////// Interpretation ////////////////////////
 
   function interpretGesture(landmarks) {
@@ -292,11 +293,14 @@ async function predictWebcam() {
     }
 
     lastAverageX = averageX;
-    console.log("Aktuelle Bewegung: ", currentMovement); // Zum Debuggen
+    // console.log("Aktuelle Bewegung: ", currentMovement); // Zum Debuggen
   }
   handleGameLogic();
 }
 function calculatePalmBaseCenter(palmBasePoints) {
+  if (!palmBasePoints || palmBasePoints.length === 0) {
+    return 0; // oder einen anderen geeigneten Standardwert
+  }
   const sumX = palmBasePoints.reduce((sum, point) => sum + point.x, 0);
   const centerX = sumX / palmBasePoints.length;
   palmBaseCenterX = centerX;
