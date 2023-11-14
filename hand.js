@@ -1,3 +1,8 @@
+let palmBaseCenterX = 1; // Globale Variable
+export const hand = {
+  return: palmBaseCenterX,
+};
+
 import {
   GestureRecognizer,
   FilesetResolver,
@@ -294,6 +299,7 @@ async function predictWebcam() {
 function calculatePalmBaseCenter(palmBasePoints) {
   const sumX = palmBasePoints.reduce((sum, point) => sum + point.x, 0);
   const centerX = sumX / palmBasePoints.length;
+  palmBaseCenterX = centerX;
   return centerX;
 }
 

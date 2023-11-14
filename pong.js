@@ -1,8 +1,11 @@
 // Importieren der matter.js-Bibliothek
+import Matter from "https://cdn.jsdelivr.net/npm/matter-js@0.14.2/build/matter.min.js";
+
 const { Engine, Render, World, Bodies, Body, Events } = Matter;
 
 // Globale Variable für die Fallgeschwindigkeit
 let fallSpeed = 0.1; // Standardwert, kann angepasst werden
+import { hand } from "./hand.js";
 
 // Erstellen des Engines
 const engine = Engine.create();
@@ -77,6 +80,7 @@ function createRandomBlock() {
 
 // Funktion zum Erstellen eines neuen Blocks
 function createBlock(type) {
+  //   console.log(hand.palmBaseCenterX);
   const x = 400;
   const y = 0;
   const blockWidth = 40;
@@ -100,16 +104,21 @@ function createBlock(type) {
       ];
       break;
     case "line":
-      console.log("Line-Block");
+      console.log("Line-Block", y);
       parts = [
-        Bodies.rectangle(x, y, blockWidth, blockHeight, { friction: friction }),
-        Bodies.rectangle(x, y + 1 + blockHeight, blockWidth, blockHeight, {
+        Bodies.rectangle(x, y, blockWidth, blockHeight * 4, {
           friction: friction,
         }),
-        Bodies.rectangle(x, y + 1 + 2 * blockHeight, blockWidth, blockHeight, {
+        // Bodies.rectangle(x, y + 1 + blockHeight, blockWidth, 1, {
+        //   friction: friction,
+        // }),
+        Bodies.rectangle(x, y - blockHeight, blockWidth, 1, {
           friction: friction,
         }),
-        Bodies.rectangle(x, y + 1 + 3 * blockHeight, blockWidth, blockHeight, {
+        Bodies.rectangle(x, y, blockWidth, 1, {
+          friction: friction,
+        }),
+        Bodies.rectangle(x, y + blockHeight, blockWidth, 1, {
           friction: friction,
         }),
       ];
@@ -198,31 +207,6 @@ function createBlock(type) {
 let currentBlock = createRandomBlock();
 
 // Event-Listener für Tastatureingaben
-document.addEventListener("keydown", (event) => {
-  if (!currentBlock.isControllable) return;
-
-  const { keyCode } = event;
-  switch (keyCode) {
-    case 37: // Linke Pfeiltaste
-      Body.setPosition(currentBlock, {
-        x: currentBlock.position.x - 5,
-        y: currentBlock.position.y,
-      });
-      break;
-    case 39: // Rechte Pfeiltaste
-      Body.setPosition(currentBlock, {
-        x: currentBlock.position.x + 5,
-        y: currentBlock.position.y,
-      });
-      break;
-    case 38: // Pfeiltaste nach oben
-      Body.rotate(currentBlock, -Math.PI / 2); // Drehen gegen den Uhrzeigersinn
-      break;
-    case 40: // Pfeiltaste nach unten
-      Body.rotate(currentBlock, Math.PI / 2); // Drehen im Uhrzeigersinn
-      break;
-  }
-});
 
 // Globale Variable, um das Block-Spawning zu steuern
 let spawnBlocks = true;
@@ -299,48 +283,28 @@ Events.on(engine, "collisionStart", (event) => {
           });
         }
       }
-      // if ((pair.bodyA === block && pair.bodyB === ground) ||
-      //     (pair.bodyB === block && pair.bodyA === ground)) {
-
-      //     World.remove(engine.world, block); // Entfernen des Blocks
-      //     blocks.splice(index, 1); // Entfernen des Blocks aus der Liste
-
-      //     if (block === currentBlock) {
-      //         console.log('Ein fallender Block hat den Boden berührt und wurde entfernt.');
-      //         if (spawnBlocks) {
-      //             currentBlock = createRandomBlock(); // Erzeugen eines neuen Blocks
-      //         }
-      //     }
-      // } else if (!block.hasCollided && ((pair.bodyA === block && pair.bodyB === platform) ||
-      //           (pair.bodyB === block && pair.bodyA === platform) ||
-      //           (pair.bodyA === block && blocks.includes(pair.bodyB)) ||
-      //           (pair.bodyB === block && blocks.includes(pair.bodyA)))) {
-
-      //     block.isControllable = false;
-      //     block.hasCollided = true;
-
-      //     // Überprüfen, ob die Höhe des Blocks 20 oder darunter ist
-      //     if (block.position.y <= 20) {
-      //         spawnBlocks = false; // Deaktivieren des Block-Spawnings
-      //     }
-
-      //     if (block === currentBlock && spawnBlocks) {
-      //         console.log('Ein fallender Block hat den Boden oder einen anderen Block berührt.');
-      //         currentBlock = createRandomBlock();
-      //     }
-      // }
     });
   });
 });
 
-// y
+// ...
 
-// Ersetzen Sie Ihre Engine.run und Render.run Aufrufe durch folgendes:
+function updateBlockPosition() {
+  if (currentBlock && currentBlock.isControllable) {
+    // Verwenden Sie die Handposition, um die X-Position des Blocks zu setzen
+    Body.setPosition(currentBlock, {
+      x: hand.palmBaseCenterX,
+    });
+
+    // Optional: weitere Steuerungen basierend auf Gesten oder Bewegungen
+  }
+}
+
+// Ihre Animationsschleife
 (function run() {
   Engine.update(engine, 1000 / 60);
   Render.world(render);
-
-  // updateAndShowHeight(render);
+  //   updateBlockPosition(); // Aktualisiert die Position des Blocks basierend auf der Handposition
 
   requestAnimationFrame(run);
 })();
