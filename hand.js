@@ -34,7 +34,6 @@ const createGestureRecognizer = async () => {
   demosSection.classList.remove("invisible");
 };
 createGestureRecognizer();
-
 /********************************************************************
   // Demo 1: Detect hand gestures in images
   ********************************************************************/
@@ -199,7 +198,34 @@ async function predictWebcam() {
   canvasElement.style.width = videoWidth;
   webcamElement.style.width = videoWidth;
 
+  const landmarkColors = {
+    0: "#FF0000", // Rot für die erste Landmarke
+    1: "#00FF00", // Grün für die zweite Landmarke
+    2: "#0000FF", // Blau für die dritte Landmarke
+    3: "#FFFF00", // Gelb für die vierte Landmarke
+    4: "#FF00FF", // Magenta für die fünfte Landmarke
+    5: "#00FFFF", // Cyan für die sechste Landmarke
+    6: "#FFFFFF", // Weiß für die siebte Landmarke
+    7: "#000000", // Schwarz für die achte Landmarke
+    8: "#FFA500", // Orange für die neunte Landmarke
+    9: "#800080", // Violett für die zehnte Landmarke
+    10: "#008000", // Dunkelgrün für die elfte Landmarke
+    11: "#808000", // Olive für die zwölfte Landmarke
+    12: "#58FA82", // Dunkelrot für die dreizehnte Landmarke
+    13: "#008080", // Dunkelcyan für die vierzehnte Landmarke
+    14: "#808080", // Dunkelgrau für die fünfzehnte Landmarke
+    15: "#000080", // Dunkelblau für die sechzehnte Landmarke
+    16: "#FFC0CB", // Rosa für die siebzehnte Landmarke
+    17: "#800000", // Dunkelrot für die achtzehnte Landmarke
+    18: "#FE2EF7", // Schwarz für die neunzehnte Landmarke
+    19: "#58ACFA", // Schwarz für die zwanzigste Landmarke
+    20: "#F3F781", // Schwarz für die einundzwanzigste Landmarke
+    21: "#000000", // Schwarz für die zweiundzwanzigste Landmarke
+  };
   if (results.landmarks) {
+    const palmBasePoints = results.landmarks[0].slice(0, 5);
+    const palmBaseCenterX = calculatePalmBaseCenter(palmBasePoints);
+
     results.landmarks.forEach((landmarks) => {
       interpretGesture(landmarks);
       drawingUtils.drawConnectors(
@@ -210,11 +236,17 @@ async function predictWebcam() {
           lineWidth: 2,
         }
       );
-      drawingUtils.drawLandmarks(landmarks, {
-        color: "#0431B4",
-        lineWidth: 1,
+
+      landmarks.forEach((landmark, index) => {
+        const color = landmarkColors[index] || "#0431B4"; // Standardfarbe, wenn keine spezifische Farbe definiert wurde
+        drawingUtils.drawLandmarks([landmark], {
+          color: color,
+          lineWidth: 1,
+        });
+        console.log(`Landmarke ${index} (${color}):`, landmark);
       });
     });
+    console.log(`Mittelpunkt des Handballens (X-Achse): ${palmBaseCenterX}`);
   }
 
   canvasCtx.restore();
@@ -237,7 +269,7 @@ async function predictWebcam() {
   if (webcamRunning === true) {
     window.requestAnimationFrame(predictWebcam);
   }
-
+  console.log(results.landmarks);
   //////////////////// Interpretation ////////////////////////
 
   function interpretGesture(landmarks) {
@@ -259,6 +291,12 @@ async function predictWebcam() {
   }
   handleGameLogic();
 }
+function calculatePalmBaseCenter(palmBasePoints) {
+  const sumX = palmBasePoints.reduce((sum, point) => sum + point.x, 0);
+  const centerX = sumX / palmBasePoints.length;
+  return centerX;
+}
+
 function handleGameLogic() {
   // Überprüfen der aktuellen Geste und Durchführen der entsprechenden Aktion
   switch (currentGestureName) {
