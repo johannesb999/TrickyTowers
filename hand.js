@@ -189,6 +189,8 @@ async function predictWebcam() {
   }
 
   canvasCtx.save();
+  canvasCtx.scale(-1, 1); // Horizontal spiegeln
+  canvasCtx.translate(-canvasElement.width, 0);
   canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
   const drawingUtils = new DrawingUtils(canvasCtx);
 
@@ -226,7 +228,7 @@ async function predictWebcam() {
     const handedness = results.handednesses[0][0].displayName;
     gestureOutput.innerText = `GestureRecognizer: ${categoryName}\n Confidence: ${categoryScore} %\n Handedness: ${handedness}`;
     currentGestureName = results.gestures[0][0].categoryName.toLowerCase();
-    console.log("Erkannte Geste:", currentGestureName);
+    // console.log("Erkannte Geste:", currentGestureName);
   } else {
     gestureOutput.style.display = "none";
     currentGestureName = "none";
@@ -244,9 +246,9 @@ async function predictWebcam() {
 
     if (Math.abs(averageX - lastAverageX) > threshold) {
       if (averageX > lastAverageX) {
-        currentMovement = "right";
-      } else {
         currentMovement = "left";
+      } else {
+        currentMovement = "right";
       }
     } else {
       currentMovement = "none";
@@ -286,33 +288,33 @@ function handleGameLogic() {
 /* G  */
 
 function openPalmAction() {
-  console.log("Open Palm Geste erkannt");
+  // console.log("Open Palm Geste erkannt");
   // Fügen Sie hier Ihre Open Palm spezifische Logik ein
 }
 
 function fistAction() {
-  console.log("Fist Geste erkannt");
+  // console.log("Fist Geste erkannt");
   // Fügen Sie hier Ihre Fist spezifische Logik ein
 }
 
 function victoryAction() {
-  console.log("Victory Geste erkannt");
+  // console.log("Victory Geste erkannt");
   // Fügen Sie hier Ihre Victory spezifische Logik ein
 }
 
 function noGestureAction() {
-  console.log("Keine Geste erkannt");
+  // console.log("Keine Geste erkannt");
   // Fügen Sie hier Ihre Logik für keine oder nicht spezifische Geste ein
 }
 
 /* Bewegungen  */
 
 function moveBlockRight() {
-  console.log("Bewegt Block nach rechts");
+  // console.log("Bewegt Block nach rechts");
   // Fügen Sie hier Ihre Logik ein, um den Block nach rechts zu bewegen
 }
 
 function moveBlockLeft() {
-  console.log("Bewegt Block nach links");
+  // console.log("Bewegt Block nach links");
   // Fügen Sie hier Ihre Logik ein, um den Block nach links zu bewegen
 }
