@@ -1,11 +1,10 @@
 // Importieren der matter.js-Bibliothek
-import Matter from "https://cdn.jsdelivr.net/npm/matter-js@0.14.2/build/matter.min.js";
 
 const { Engine, Render, World, Bodies, Body, Events } = Matter;
 
 // Globale Variable für die Fallgeschwindigkeit
 let fallSpeed = 0.1; // Standardwert, kann angepasst werden
-import { hand } from "./hand.js";
+// import { hand } from "./hand.js";
 
 // Erstellen des Engines
 const engine = Engine.create();

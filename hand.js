@@ -1,7 +1,7 @@
 let palmBaseCenterX = 1; // Globale Variable
-export const hand = {
-  return: palmBaseCenterX,
-};
+// export const hand = {
+//   return: palmBaseCenterX,
+// };
 
 import {
   GestureRecognizer,
