@@ -361,6 +361,9 @@ function handleGameLogic() {
         case "victory":
           victoryAction();
       break;
+      case 'thumb_up':
+        thumbsUp();
+        break;
     // Weitere Gesten können hier hinzugefügt werden
     default:
       // Aktion für nicht erkannte oder keine Geste
@@ -376,6 +379,10 @@ function handleGameLogic() {
 }
 
 /* G  */
+
+function thumbsUp() {
+  // console.log("Johannes ist dumm");
+}
 
 function openPalmAction() {
   // console.log("Open Palm Geste erkannt");
