@@ -32,6 +32,7 @@ const createGestureRecognizer = async () => {
     runningMode: runningMode,
   });
   demosSection.classList.remove("invisible");
+  startWebcam();
 };
 createGestureRecognizer();
 /********************************************************************
@@ -137,7 +138,7 @@ function hasGetUserMedia() {
 // wants to activate it.
 if (hasGetUserMedia()) {
   enableWebcamButton = document.getElementById("webcamButton");
-  enableWebcamButton.addEventListener("click", enableCam);
+  // enableWebcamButton.addEventListener("click", enableCam);
 } else {
   console.warn("getUserMedia() is not supported by your browser");
 }
@@ -170,6 +171,38 @@ function enableCam(event) {
     vneiwdjlfdgswopg = true;
   });
 }
+
+
+
+
+async function startWebcam() {
+  if (!gestureRecognizer) {
+    console.warn("GestureRecognizer not yet loaded");
+    return;
+  }
+
+  webcamRunning = true;
+
+  const constraints = {
+    video: true,
+  };
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    video.srcObject = stream;
+    video.addEventListener("loadeddata", predictWebcam);
+    vneiwdjlfdgswopg = true;
+  } catch (error) {
+    console.error("Error accessing the webcam", error);
+  }
+}
+
+
+
+
+
+
+
 
 let lastVideoTime = -1;
 let results = undefined;
@@ -258,6 +291,8 @@ async function predictWebcam() {
   canvasCtx.restore();
   if (results.gestures.length > 0) {
     gestureOutput.style.display = "block";
+    gestureOutput.style.position = "absolute";
+    gestureOutput.style.color = "white";
     gestureOutput.style.width = videoWidth;
     const categoryName = results.gestures[0][0].categoryName;
     const categoryScore = parseFloat(
@@ -266,7 +301,6 @@ async function predictWebcam() {
     const handedness = results.handednesses[0][0].displayName;
     gestureOutput.innerText = `GestureRecognizer: ${categoryName}\n Confidence: ${categoryScore} %\n Handedness: ${handedness}`;
     currentGestureName = results.gestures[0][0].categoryName.toLowerCase();
-    // console.log("Erkannte Geste:", currentGestureName);
   } else {
     gestureOutput.style.display = "none";
     currentGestureName = "none";
@@ -277,11 +311,11 @@ async function predictWebcam() {
   }
   // console.log(results.landmarks);
   //////////////////// Interpretation ////////////////////////
-
+  
   function interpretGesture(landmarks) {
     const sumX = landmarks.reduce((sum, landmark) => sum + landmark.x, 0);
     const averageX = sumX / landmarks.length;
-
+    
     if (Math.abs(averageX - lastAverageX) > threshold) {
       if (averageX > lastAverageX) {
         currentMovement = "left";
@@ -291,11 +325,10 @@ async function predictWebcam() {
     } else {
       currentMovement = "none";
     }
-
+    
     lastAverageX = averageX;
     // console.log("Aktuelle Bewegung: ", currentMovement); // Zum Debuggen
   }
-  handleGameLogic();
 }
 function calculatePalmBaseCenter(palmBasePoints) {
   if (!palmBasePoints || palmBasePoints.length === 0) {
@@ -307,17 +340,26 @@ function calculatePalmBaseCenter(palmBasePoints) {
   return centerX;
 }
 
+
+(function run() {
+  // console.log("fkjdsf");
+  handleGameLogic();
+  
+  requestAnimationFrame(run);
+})();
+
 function handleGameLogic() {
   // Überprüfen der aktuellen Geste und Durchführen der entsprechenden Aktion
+  // console.log("Erkannte Geste:", currentGestureName);
   switch (currentGestureName) {
     case "open_palm":
       openPalmAction();
       break;
-    case "fist":
-      fistAction();
-      break;
-    case "victory":
-      victoryAction();
+      case "closed_fist":
+        fistAction();
+        break;
+        case "victory":
+          victoryAction();
       break;
     // Weitere Gesten können hier hinzugefügt werden
     default:
@@ -337,21 +379,25 @@ function handleGameLogic() {
 
 function openPalmAction() {
   // console.log("Open Palm Geste erkannt");
+  fist = false;
   // Fügen Sie hier Ihre Open Palm spezifische Logik ein
 }
 
 function fistAction() {
   // console.log("Fist Geste erkannt");
+  fist = true;
   // Fügen Sie hier Ihre Fist spezifische Logik ein
 }
 
 function victoryAction() {
-  // console.log("Victory Geste erkannt");
+  console.log("Victory Geste erkannt");
+  victory = true;
   // Fügen Sie hier Ihre Victory spezifische Logik ein
 }
 
 function noGestureAction() {
   // console.log("Keine Geste erkannt");
+  fist = false;
   // Fügen Sie hier Ihre Logik für keine oder nicht spezifische Geste ein
 }
 
