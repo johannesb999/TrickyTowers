@@ -31,7 +31,7 @@ const createGestureRecognizer = async () => {
     },
     runningMode: runningMode,
   });
-  demosSection.classList.remove("invisible");
+  // demosSection.classList.remove("invisible");
   startWebcam();
 };
 createGestureRecognizer();
@@ -67,23 +67,23 @@ async function handleClick(event) {
 
   if (results.gestures.length > 0) {
     const p = event.target.parentNode.childNodes[3];
-    p.setAttribute("class", "info");
+    // s
 
     const categoryName = results.gestures[0][0].categoryName; //Geste!!!!!!!!!!!!!!
     const categoryScore = parseFloat(
       results.gestures[0][0].score * 100
     ).toFixed(2);
-    const handedness = results.handednesses[0][0].displayName;
+    // const handedness = results.handednesses[0][0].displayName;
 
-    p.innerText = `GestureRecognizer: ${categoryName}\n Confidence: ${categoryScore}%\n Handedness: ${handedness}`;
-    p.style =
-      "left: 0px;" +
-      "top: " +
-      event.target.height +
-      "px; " +
-      "width: " +
-      (event.target.width - 10) +
-      "px;";
+    // p.innerText = `GestureRecognizer: ${categoryName}\n Confidence: ${categoryScore}%\n Handedness: ${handedness}`;
+    // p.style =
+    //   "left: 0px;" +
+    //   "top: " +
+    //   event.target.height +
+    //   "px; " +
+    //   "width: " +
+    //   (event.target.width - 10) +
+    //   "px;";
 
     const canvas = document.createElement("canvas");
     canvas.setAttribute("class", "canvas");
@@ -281,6 +281,9 @@ async function predictWebcam() {
 
   canvasCtx.restore();
   if (results.gestures.length > 0) {
+    console.log("äuft");
+    document.getElementById("gifBox").style.display = "none";
+    document.getElementById("gifBox2").style.display = "none";
     gestureOutput.style.display = "block";
     gestureOutput.style.position = "absolute";
     gestureOutput.style.color = "white";
@@ -290,7 +293,7 @@ async function predictWebcam() {
       results.gestures[0][0].score * 100
     ).toFixed(2);
     const handedness = results.handednesses[0][0].displayName;
-    gestureOutput.innerText = `GestureRecognizer: ${categoryName}\n Confidence: ${categoryScore} %\n Handedness: ${handedness}`;
+    // gestureOutput.innerText = `GestureRecognizer: ${categoryName}\n Confidence: ${categoryScore} %\n Handedness: ${handedness}`;
     currentGestureName = results.gestures[0][0].categoryName.toLowerCase();
   } else {
     gestureOutput.style.display = "none";
@@ -382,8 +385,8 @@ function thumbs_domwn() {
 }
 
 function thumbsUp() {
+  victory = true;
   // console.log("Johannes ist dumm");
-  thumbUp = true;
 }
 
 function openPalmAction() {
@@ -400,7 +403,7 @@ function fistAction() {
 
 function victoryAction() {
   console.log("Victory Geste erkannt");
-  victory = true;
+  thumbUp = true;
   // Fügen Sie hier Ihre Victory spezifische Logik ein
 }
 

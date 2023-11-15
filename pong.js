@@ -1,14 +1,14 @@
 const { Engine, Render, World, Bodies, Body, Events } = Matter;
 
 // Globale Variable für die Fallgeschwindigkeit
-let fallSpeed = 0.2; // Standardwert, kann angepasst werden
+let fallSpeed = 0.35; // Standardwert, kann angepasst werden
 // import { hand } from "./hand.js";
 let currentBlock;
 // Erstellen des Engines
 const engine = Engine.create();
 engine.world.gravity.y = fallSpeed; // Anpassen der Gravitation
 // engine.render.options.background = "white";
-let isGameActive = true;
+
 // Erstellen des Renderers
 
 const render = Render.create({
@@ -26,7 +26,7 @@ const render = Render.create({
 const groundHeight = 60;
 // Größe und Position der Plattform
 const platformWidth = canvasWidth / 3;
-const platformHeight = 200; // Angenommene Dicke der Plattform
+const platformHeight = 30; // Angenommene Dicke der Plattform
 const blockHeight = 20; // Angenommene Höhe eines Blocks
 const platformY =
   canvasHeight - 2 * blockHeight - groundHeight / 2 + platformHeight / 4;
@@ -39,13 +39,24 @@ const ground = Bodies.rectangle(
   groundHeight,
   { isStatic: true }
 );
-const platform = Bodies.rectangle(
-  canvasWidth / 2,
-  platformY,
-  platformWidth,
-  platformHeight,
-  { isStatic: true }
-);
+
+let part = [
+  Bodies.rectangle(
+    canvasWidth / 2,
+    platformY + platformHeight,
+    platformWidth / 6,
+    platformHeight * 2.8,
+    { render: { fillStyle: "#585858" } }
+  ),
+  Bodies.rectangle(canvasWidth / 2, platformY, platformWidth, platformHeight, {
+    render: { fillStyle: "#585858" },
+  }),
+];
+
+const platform = Body.create({
+  parts: part,
+  isStatic: true,
+});
 const leftWall = Bodies.rectangle(0, canvasHeight / 2, 10, canvasHeight, {
   isStatic: true,
 });
@@ -75,7 +86,7 @@ function getRandomBlockType() {
 // Modifizierte Funktion zum Erstellen eines neuen Blocks
 function createRandomBlock() {
   const blockType = getRandomBlockType();
-  // const blockType = "square";
+  //   const blockType = "square";
   // const blockType = "line";
   // const blockType = "l-block";
   // const blockType = "reverse-l-block";
@@ -300,7 +311,7 @@ function createBlock(type) {
 
   block.isControllable = true;
   block.hasCollided = false;
-  block.mass = 1;
+  block.mass = 100;
   World.add(engine.world, [block]);
   blocks.push(block);
   return block;
@@ -334,8 +345,17 @@ Events.on(engine, "collisionStart", (event) => {
           }
         } else if (pair.bodyA === platform || pair.bodyB === platform) {
           // Logik für Kollision mit der Plattform
-          block.isControllable = false;
+
           block.hasCollided = true;
+
+          setTimeout(() => {
+            block.isControllable = false; // Block nach 1 Sekunde nicht mehr steuerbar machen
+
+            if (block === currentBlock && spawnBlocks) {
+              console.log("Ein fallender Block hat die Plattform berührt.");
+              currentBlock = createRandomBlock(); // Neuen Block nach 1 Sekunde spawnen
+            }
+          }, 200);
 
           // Überprüfen, ob die Höhe des Blocks 20 oder darunter ist
           if (block.position.y <= 20) {
@@ -346,10 +366,9 @@ Events.on(engine, "collisionStart", (event) => {
           // const newMass = block.mass * 10; // Beispiel: Verdopple die Masse
           // Body.setMass(block, newMass);
 
-          if (block === currentBlock && spawnBlocks) {
-            console.log("Ein fallender Block hat die Plattform berührt.");
-            currentBlock = createRandomBlock();
-          }
+          // if (block === currentBlock && spawnBlocks) {
+          //   currentBlock = createRandomBlock();
+          // }
         }
 
         if (
@@ -374,12 +393,14 @@ Events.on(engine, "collisionStart", (event) => {
               if (block.position.y <= 20) {
                 spawnBlocks = false; // Deaktivieren des Block-Spawnings
               }
-              block.isControllable = false;
-              block.hasCollided = true;
+              setTimeout(() => {
+                block.isControllable = false; // Block nach 1 Sekunde nicht mehr steuerbar machen
 
-              if (block === currentBlock && spawnBlocks) {
-                currentBlock = createRandomBlock();
-              }
+                if (block === currentBlock && spawnBlocks) {
+                  console.log("Ein fallender Block hat die Plattform berührt.");
+                  currentBlock = createRandomBlock(); // Neuen Block nach 1 Sekunde spawnen
+                }
+              }, 200);
             }
           });
         }
@@ -402,7 +423,7 @@ function test(value, startLow, startHigh, endLow, endHigh, reverse) {
       endLow;
   }
   if (cache < 0) {
-    cache = 0;
+    cache = 40;
   } else if (cache > canvasWidth) {
     cache = canvasWidth;
   }
@@ -433,21 +454,29 @@ function updateBlockPosition() {
       // Timer zurücksetzen
       clearTimeout(spawnTimer);
       spawnTimer = setTimeout(() => {
-        spawnBlocks = false;
+        resetGame();
         console.log("Blockspawning deaktiviert.");
-        wasGestureRecognized2 = false;
-      }, 5000); // 10 Sekunden
+      }, 7000); // 10 Sekunden
     }
     if (thumbDown) {
-      fallSpeed = 10;
-      console.log(fallspeed);
-    } else {
-      fallspeed = 0.2;
+      Body.setPosition(currentBlock, {
+        x: currentBlock.position.x,
+        y: currentBlock.position.y + 10,
+      });
+
+      // Optional: weitere Steuerungen basierend auf Gesten oder Bewegungen
     }
-    // Optional: weitere Steuerungen basierend auf Gesten oder Bewegungen
   }
 }
-function resetGame() {}
+function resetGame() {
+  // blocks.forEach((block) => {
+  //   World.remove(engine.world, block);
+  // });
+  spawnBlocks = false;
+  wasGestureRecognized2 = false;
+  document.getElementById("gifBox").style.display = "block";
+  document.getElementById("gifBox2").style.display = "block";
+}
 
 let wasGestureRecognized = false;
 let wasGestureRecognized2 = false;
@@ -478,13 +507,14 @@ function updateBlockRotation() {
     wasGestureRecognized2 = true;
     victory = false;
   }
+  if (thumbUp) resetGame();
 
   requestAnimationFrame(run);
 })();
 
 setInterval(() => {
-  console.log("");
-  console.log("victory:", victory);
-  console.log("wasGestureRecognized2:", wasGestureRecognized2);
-  console.log("spawnBlocks:", spawnBlocks);
+  // console.log("");
+  // console.log("victory:", victory);
+  // console.log("wasGestureRecognized2:", wasGestureRecognized2);
+  // console.log("spawnBlocks:", spawnBlocks);
 }, 2000);

@@ -1,0 +1,21 @@
+#gifBox2 {
+  position: absolute;
+  top: 1500px;
+  left: 455px;
+  transform: scaleX(-1);
+}
+
+#gifBox {
+  position: absolute;
+  top: 900px;
+  left: 150px;
+  transform: scaleX(-1);
+}
+
+#DasHierIstImmerNochWerbung {
+  width: 200px;
+  height: auto;
+  position: absolute;
+  top: 30px;
+  left: 30px;
+}

@@ -5,9 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/matter-js@0.14.2/build/matter.min.js"></script>
     <link rel="icon" type="image/png" href="Frosch.png" sizes="255x198" />
+    <link rel="stylesheet" href="style.css" />
     <title>Document</title>
   </head>
   <body>
+    <img id="DasHierIstImmerNochWerbung" src="HfG-Logo.svg" />
+
+    <div id="gifBox">
+      <img src="Hand-Slider.gif" width="800" height="auto" />
+    </div>
+    <div id="gifBox2">
+      <img src="hand_zu_faust.gif" width="200" height="auto" />
+    </div>
     <link
       href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css"
       rel="stylesheet"
@@ -33,14 +42,15 @@
           <canvas
             class="output_canvas"
             id="output_canvas"
-            width="1280"
-            height="720"
+            width="1080"
+            height="920"
             style="position: absolute; left: 0px; top: 0px"
           ></canvas>
           <p id="gesture_output" class="output"></p>
         </div>
       </div>
     </section>
+
     <script>
       const canvasWidth = 1080;
       const canvasHeight = 1920;
