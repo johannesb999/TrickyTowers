@@ -1,6 +1,7 @@
 #gifBox2 {
   position: absolute;
   top: 1500px;
+  /* 1300 */
   left: 350px;
   transform: scaleX(-1);
 }
@@ -8,6 +9,7 @@
 #gifBox {
   position: absolute;
   top: 900px;
+  /* 700 */
   left: 150px;
   transform: scaleX(-1);
 }
@@ -18,4 +20,13 @@
   position: absolute;
   top: 30px;
   left: 30px;
+}
+
+
+#middleFingerMessage {
+  position: absolute;
+  color: white;
+  top: 60px;
+  left: 450px;
+  font-size: 30px;
 }

@@ -224,27 +224,40 @@ async function predictWebcam() {
   webcamElement.style.width = videoWidth;
 
   const landmarkColors = {
-    // 0: "#FF0000", // Rot für die erste Landmarke//////
-    // 1: "#00FF00", // Grün für die zweite Landmarke
-    // 2: "#0000FF", // Blau für die dritte Landmarke
-    // 3: "#FFFF00", // Gelb für die vierte Landmarke
-    // 4: "#FF00FF", // Magenta für die fünfte Landmarke
-    // 5: "#00FFFF", // Cyan für die sechste Landmarke//////
-    // 6: "#FFFFFF", // Weiß für die siebte Landmarke
-    // 7: "#000000", // Schwarz für die achte Landmarke
-    // 8: "#FFA500", // Orange für die neunte Landmarke
-    // 9: "#800080", // Violett für die zehnte Landmarke
-    // 10: "#008000", // Dunkelgrün für die elfte Landmarke
-    // 11: "#808000", // Olive für die zwölfte Landmarke
-    // 12: "#58FA82", // Dunkelrot für die dreizehnte Landmarke
-    // 13: "#008080", // Dunkelcyan für die vierzehnte Landmarke
-    // 14: "#808080", // Dunkelgrau für die fünfzehnte Landmarke
-    // 15: "#000080", // Dunkelblau für die sechzehnte Landmarke
-    // 16: "#FFC0CB", // Rosa für die siebzehnte Landmarke
-    // 17: "#800000", // Dunkelrot für die achtzehnte Landmarke//////
-    // 18: "#FE2EF7", // Schwarz für die neunzehnte Landmarke
-    // 19: "#58ACFA", // Schwarz für die zwanzigste Landmarke
-    // 20: "#F3F781", // Schwarz für die einundzwanzigste Landmarke
+
+    //Handballen-Ansatz
+    // 0: "#FF0000", 
+    //daumen
+    // 1: "#00FF00", 
+    // 2: "#0000FF", 
+    // 3: "#FFFF00", 
+    // 4: "#FF00FF", //Daumen-Spitze
+
+    //Zeigefinger
+    // 5: "#00FFFF", //Ansatz am Handballen
+    // 6: "#FFFFFF", 
+    // 7: "#000000", 
+    // 8: "#FFA500", //Fingerspitze
+
+    //Mittelfinger
+    // 9: "#800080", //Ansatz am Handballen
+    // 10: "#008000", 
+    // 11: "#808000",
+    // 12: "#58FA82", //Mittelfinger-Spitze
+
+    //Ringfinger
+    // 13: "#008080", //Ansatz am Handballen
+    // 14: "#808080", 
+    // 15: "#000080", 
+    // 16: "#FFC0CB", //Ringfinger-Spitze
+
+    //Kleiner Finger
+    // 17: "#800000", //Ansatz am Handballen
+    // 18: "#FE2EF7", 
+    // 19: "#58ACFA",
+    // 20: "#F3F781", //Kliern Finger-Spitze
+
+
     // 21: "#000000", // Schwarz für die zweiundzwanzigste Landmarke
   };
   if (results.landmarks) {
@@ -279,12 +292,29 @@ async function predictWebcam() {
     // if (landmark17) { /* Logik für landmark17 */ }
   }
 
+
+  if (results.landmarks && results.landmarks[0]) {
+    const middleFingerRaised = checkMiddleFingerRaised(results.landmarks[0]);
+    console.log("middleFinger:", middleFingerRaised);
+    if (middleFingerRaised) {
+      document.getElementById('middleFingerMessage').style.display = 'block';
+    } else {
+      document.getElementById('middleFingerMessage').style.display = 'none';
+    }
+  }
+
+
+
+
   canvasCtx.restore();
   if (results.gestures.length > 0) {
     // console.log("äuft");
+    victory = true;
     äuft = true;
-    document.getElementById("gifBox").style.display = "none";
-    document.getElementById("gifBox2").style.display = "none";
+    setTimeout(() => {
+      document.getElementById("gifBox").style.display = "none";
+      document.getElementById("gifBox2").style.display = "none";
+    },6000)
     gestureOutput.style.display = "block";
     gestureOutput.style.position = "absolute";
     gestureOutput.style.color = "white";
@@ -298,6 +328,7 @@ async function predictWebcam() {
     currentGestureName = results.gestures[0][0].categoryName.toLowerCase();
   } else {
     äuft = false;
+    victory = false;
     gestureOutput.style.display = "none";
     currentGestureName = "none";
   }
@@ -387,7 +418,6 @@ function thumbs_domwn() {
 }
 
 function thumbsUp() {
-  victory = true;
   // console.log("Johannes ist dumm");
 }
 
@@ -412,7 +442,7 @@ function victoryAction() {
 function noGestureAction() {
   // console.log("Keine Geste erkannt");
   fist = false;
-  victory = false;
+  // victory = false;
   thumbUp = false;
   thumbDown = false;
   // Fügen Sie hier Ihre Logik für keine oder nicht spezifische Geste ein
@@ -428,4 +458,21 @@ function moveBlockRight() {
 function moveBlockLeft() {
   // console.log("Bewegt Block nach links");
   // Fügen Sie hier Ihre Logik ein, um den Block nach links zu bewegen
+}
+
+function checkMiddleFingerRaised(landmarks) {
+  const middleFingerTipY = landmarks[12].y;
+  const middleFingerBaseY = landmarks[9].y;
+  const indexFingerTipY = landmarks[8].y;
+  const ringFingerTipY = landmarks[16].y;
+  const littleFingerTipY = landmarks[20].y;
+
+  // Berechnen der Länge des Mittelfingers
+  const middleFingerLength = (middleFingerBaseY - middleFingerTipY) / 2;
+
+  // Überprüfen, ob der Mittelfinger um mindestens seine eigene Länge höher ist als die anderen Fingerspitzen und über dem Ansatz liegt
+  return middleFingerTipY + middleFingerLength < indexFingerTipY &&
+         middleFingerTipY + middleFingerLength < ringFingerTipY &&
+         middleFingerTipY + middleFingerLength < littleFingerTipY &&
+         middleFingerTipY < middleFingerBaseY; // Zusätzlich prüfen, ob die Spitze des Mittelfingers über dem Ansatz liegt
 }
