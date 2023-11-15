@@ -13,8 +13,8 @@ let webcamRunning = false;
 let currentMovement = "none"; // Mögliche Werte: 'left', 'right', 'none'
 let currentGestureName = "none"; // Startwert auf 'none' gesetzt
 
-const videoHeight = "480px";
-const videoWidth = "640px";
+const videoHeight = canvasHeight;
+const videoWidth = canvasWidth;
 
 // Before we can use HandLandmarker class we must wait for it to finish
 // loading. Machine Learning models can be large and take a moment to
@@ -149,10 +149,10 @@ function enableCam(event) {
     alert("Please wait for gestureRecognizer to load");
     return;
   }
-  // let vneiwdjlfdgswopg = false;
+  // let actualise = false;
   if (webcamRunning === true) {
     webcamRunning = false;
-    // vneiwdjlfdgswopg = false;
+    // actualise = false;
     enableWebcamButton.innerText = "ENABLE PREDICTIONS";
   } else {
     webcamRunning = true;
@@ -168,12 +168,9 @@ function enableCam(event) {
   navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
     video.srcObject = stream;
     video.addEventListener("loadeddata", predictWebcam);
-    vneiwdjlfdgswopg = true;
+    actualise = true;
   });
 }
-
-
-
 
 async function startWebcam() {
   if (!gestureRecognizer) {
@@ -191,18 +188,11 @@ async function startWebcam() {
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
     video.srcObject = stream;
     video.addEventListener("loadeddata", predictWebcam);
-    vneiwdjlfdgswopg = true;
+    actualise = true;
   } catch (error) {
     console.error("Error accessing the webcam", error);
   }
 }
-
-
-
-
-
-
-
 
 let lastVideoTime = -1;
 let results = undefined;
@@ -234,58 +224,59 @@ async function predictWebcam() {
   webcamElement.style.width = videoWidth;
 
   const landmarkColors = {
-    0: "#FF0000", // Rot für die erste Landmarke
-    1: "#00FF00", // Grün für die zweite Landmarke
-    2: "#0000FF", // Blau für die dritte Landmarke
-    3: "#FFFF00", // Gelb für die vierte Landmarke
-    4: "#FF00FF", // Magenta für die fünfte Landmarke
-    5: "#00FFFF", // Cyan für die sechste Landmarke
-    6: "#FFFFFF", // Weiß für die siebte Landmarke
-    7: "#000000", // Schwarz für die achte Landmarke
-    8: "#FFA500", // Orange für die neunte Landmarke
-    9: "#800080", // Violett für die zehnte Landmarke
-    10: "#008000", // Dunkelgrün für die elfte Landmarke
-    11: "#808000", // Olive für die zwölfte Landmarke
-    12: "#58FA82", // Dunkelrot für die dreizehnte Landmarke
-    13: "#008080", // Dunkelcyan für die vierzehnte Landmarke
-    14: "#808080", // Dunkelgrau für die fünfzehnte Landmarke
-    15: "#000080", // Dunkelblau für die sechzehnte Landmarke
-    16: "#FFC0CB", // Rosa für die siebzehnte Landmarke
-    17: "#800000", // Dunkelrot für die achtzehnte Landmarke
-    18: "#FE2EF7", // Schwarz für die neunzehnte Landmarke
-    19: "#58ACFA", // Schwarz für die zwanzigste Landmarke
-    20: "#F3F781", // Schwarz für die einundzwanzigste Landmarke
-    21: "#000000", // Schwarz für die zweiundzwanzigste Landmarke
+    // 0: "#FF0000", // Rot für die erste Landmarke//////
+    // 1: "#00FF00", // Grün für die zweite Landmarke
+    // 2: "#0000FF", // Blau für die dritte Landmarke
+    // 3: "#FFFF00", // Gelb für die vierte Landmarke
+    // 4: "#FF00FF", // Magenta für die fünfte Landmarke
+    // 5: "#00FFFF", // Cyan für die sechste Landmarke//////
+    // 6: "#FFFFFF", // Weiß für die siebte Landmarke
+    // 7: "#000000", // Schwarz für die achte Landmarke
+    // 8: "#FFA500", // Orange für die neunte Landmarke
+    // 9: "#800080", // Violett für die zehnte Landmarke
+    // 10: "#008000", // Dunkelgrün für die elfte Landmarke
+    // 11: "#808000", // Olive für die zwölfte Landmarke
+    // 12: "#58FA82", // Dunkelrot für die dreizehnte Landmarke
+    // 13: "#008080", // Dunkelcyan für die vierzehnte Landmarke
+    // 14: "#808080", // Dunkelgrau für die fünfzehnte Landmarke
+    // 15: "#000080", // Dunkelblau für die sechzehnte Landmarke
+    // 16: "#FFC0CB", // Rosa für die siebzehnte Landmarke
+    // 17: "#800000", // Dunkelrot für die achtzehnte Landmarke//////
+    // 18: "#FE2EF7", // Schwarz für die neunzehnte Landmarke
+    // 19: "#58ACFA", // Schwarz für die zwanzigste Landmarke
+    // 20: "#F3F781", // Schwarz für die einundzwanzigste Landmarke
+    // 21: "#000000", // Schwarz für die zweiundzwanzigste Landmarke
   };
   if (results.landmarks) {
-    // console.log("Erkannte Landmarken:", results.landmarks);
+    // Extrahieren der spezifischen Landmarken
+    const [landmark0, , , , , landmark5, , , , , , , , , , , , landmark17] =
+      results.landmarks;
+
     let palmBasePoints;
-    if (results.landmarks && results.landmarks[0]) {
-      palmBasePoints = results.landmarks[0].slice(0, 5);
+    if (landmark0) {
+      palmBasePoints = landmark0.slice(0);
     }
     const palmBaseCenterX = calculatePalmBaseCenter(palmBasePoints);
 
     results.landmarks.forEach((landmarks) => {
       interpretGesture(landmarks);
-      drawingUtils.drawConnectors(
-        landmarks,
-        GestureRecognizer.HAND_CONNECTIONS,
-        {
-          color: "#2ECCFA",
-          lineWidth: 2,
-        }
-      );
+      // drawingUtils.drawConnectors(
+      //   landmarks,
+      //   GestureRecognizer.HAND_CONNECTIONS,
+      //   { color: "#2ECCFA", lineWidth: 2 }
+      // );
 
       landmarks.forEach((landmark, index) => {
-        const color = landmarkColors[index] || "#0431B4"; // Standardfarbe, wenn keine spezifische Farbe definiert wurde
-        drawingUtils.drawLandmarks([landmark], {
-          color: color,
-          lineWidth: 1,
-        });
-        // console.log(`Landmarke ${index} (${color}):`, landmark);
+        const color = landmarkColors[index] || "#E0ECF8"; // Standardfarbe
+        drawingUtils.drawLandmarks([landmark], { color: color, lineWidth: 1 });
       });
     });
     // console.log(`Mittelpunkt des Handballens (X-Achse): ${palmBaseCenterX}`);
+
+    // Hier können Sie mit landmark5 und landmark17 arbeiten, falls benötigt
+    // Beispiel:
+    // if (landmark5) { /* Logik für landmark5 */ }
+    // if (landmark17) { /* Logik für landmark17 */ }
   }
 
   canvasCtx.restore();
@@ -311,11 +302,11 @@ async function predictWebcam() {
   }
   // console.log(results.landmarks);
   //////////////////// Interpretation ////////////////////////
-  
+
   function interpretGesture(landmarks) {
     const sumX = landmarks.reduce((sum, landmark) => sum + landmark.x, 0);
     const averageX = sumX / landmarks.length;
-    
+
     if (Math.abs(averageX - lastAverageX) > threshold) {
       if (averageX > lastAverageX) {
         currentMovement = "left";
@@ -325,9 +316,13 @@ async function predictWebcam() {
     } else {
       currentMovement = "none";
     }
-    
+
     lastAverageX = averageX;
     // console.log("Aktuelle Bewegung: ", currentMovement); // Zum Debuggen
+  }
+  // In Ihrer predictWebcam-Funktion:
+  if (results.landmarks && results.landmarks[0]) {
+    interpretGesture(results.landmarks[0]);
   }
 }
 function calculatePalmBaseCenter(palmBasePoints) {
@@ -340,11 +335,10 @@ function calculatePalmBaseCenter(palmBasePoints) {
   return centerX;
 }
 
-
 (function run() {
   // console.log("fkjdsf");
   handleGameLogic();
-  
+
   requestAnimationFrame(run);
 })();
 
@@ -355,15 +349,15 @@ function handleGameLogic() {
     case "open_palm":
       openPalmAction();
       break;
-      case "closed_fist":
-        fistAction();
-        break;
-        case "victory":
-          victoryAction();
+    case "closed_fist":
+      fistAction();
       break;
-      case 'thumb_up':
-        thumbsUp();
-        break;
+    case "victory":
+      victoryAction();
+      break;
+    case "thumb_up":
+      thumbsUp();
+      break;
     // Weitere Gesten können hier hinzugefügt werden
     default:
       // Aktion für nicht erkannte oder keine Geste
@@ -378,10 +372,60 @@ function handleGameLogic() {
   }
 }
 
+let movementHistory = []; // Historie der Bewegungen speichern
+// Auswahl einer spezifischen Landmarke für präzisere Bewegungserkennung
+const MIDDLE_FINGER_TIP_INDEX = 12; // Index für die Spitze des Mittelfingers
+
+function interpretGesture(landmarks) {
+  const middleFingerTip = landmarks[0][MIDDLE_FINGER_TIP_INDEX]; // Mittelfingerspitze
+
+  // Bewegungslogik basierend auf der spezifischen Landmarke
+  if (Math.abs(middleFingerTip.x - lastAverageX) > threshold) {
+    currentMovement = middleFingerTip.x > lastAverageX ? "right" : "left";
+    lastAverageX = middleFingerTip.x;
+  } else {
+    currentMovement = "none";
+  }
+
+  addMovementToHistory(currentMovement);
+
+  function checkForWaveGesture() {
+    if (movementHistory.length < 3) {
+      return false;
+    }
+
+    const lastThreeMovements = movementHistory.slice(-3);
+    const isWaving =
+      lastThreeMovements[0] !== lastThreeMovements[1] &&
+      lastThreeMovements[1] === lastThreeMovements[2];
+
+    console.log(
+      "Letzte drei Bewegungen:",
+      lastThreeMovements,
+      "Winken:",
+      isWaving
+    );
+
+    return isWaving;
+  }
+
+  // Aktualisieren Sie Ihre Bewegungserkennungslogik
+  function interpretGesture(landmarks) {
+    // ... Ihre bestehende Logik ...
+
+    console.log("Aktuelle Bewegung:", currentMovement);
+
+    if (checkForWaveGesture()) {
+      console.log("Winken erkannt!");
+    }
+  }
+}
+
 /* G  */
 
 function thumbsUp() {
   // console.log("Johannes ist dumm");
+  thumbUp = true;
 }
 
 function openPalmAction() {

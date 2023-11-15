@@ -24,10 +24,10 @@
       </div>
 
       <div id="liveView" class="videoView">
-        <button id="webcamButton" class="mdc-button mdc-button--raised">
+        <!-- <button id="webcamButton" class="mdc-button mdc-button--raised">
           <span class="mdc-button__ripple"></span>
           <span class="mdc-button__label">ENABLE WEBCAM</span>
-        </button>
+        </button> -->
         <div style="position: relative">
           <video style="display: none" id="webcam" autoplay playsinline></video>
           <canvas
@@ -42,10 +42,13 @@
       </div>
     </section>
     <script>
+      const canvasWidth = 1080;
+      const canvasHeight = 1920;
       let palmBaseCenterX = 400;
-      let vneiwdjlfdgswopg = false;
+      let actualise = false;
       let fist = false;
       let victory = false;
+      let thumbUp = false;
     </script>
     <script type="module" src="hand.js"></script>
     <script src="pong.js"></script>

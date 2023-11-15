@@ -1,22 +1,22 @@
 const { Engine, Render, World, Bodies, Body, Events } = Matter;
 
 // Globale Variable für die Fallgeschwindigkeit
-let fallSpeed = 0.05; // Standardwert, kann angepasst werden
+let fallSpeed = 0.2; // Standardwert, kann angepasst werden
 // import { hand } from "./hand.js";
 let currentBlock;
 // Erstellen des Engines
 const engine = Engine.create();
 engine.world.gravity.y = fallSpeed; // Anpassen der Gravitation
+// engine.render.options.background = "white";
 
 // Erstellen des Renderers
-const canvasWidth = 800;
-const canvasHeight = 900;
 
 const render = Render.create({
   element: document.body,
   engine: engine,
   options: {
-    // fillStyle: 'red',
+    wireframes: false,
+    background: "black",
     width: canvasWidth,
     height: canvasHeight,
   },
@@ -46,8 +46,16 @@ const platform = Bodies.rectangle(
   platformHeight,
   { isStatic: true }
 );
-const leftWall = Bodies.rectangle(-30, 500, 60, 1000, { isStatic: true });
-const rightWall = Bodies.rectangle(830, 500, 60, 1000, { isStatic: true });
+const leftWall = Bodies.rectangle(0, canvasHeight / 2, 10, canvasHeight, {
+  isStatic: true,
+});
+const rightWall = Bodies.rectangle(
+  canvasWidth,
+  canvasHeight / 2,
+  10,
+  canvasHeight,
+  { isStatic: true }
+);
 
 // Hinzufügen von Boden und Wänden zur Welt
 World.add(engine.world, [ground, platform, leftWall, rightWall]);
@@ -67,10 +75,10 @@ function getRandomBlockType() {
 // Modifizierte Funktion zum Erstellen eines neuen Blocks
 function createRandomBlock() {
   const blockType = getRandomBlockType();
-  // const blockType = 'square';
+  // const blockType = "square";
   // const blockType = "line";
-  // const blockType = 'l-block';
-  // const blockType = 'reverse-l-block';
+  // const blockType = "l-block";
+  // const blockType = "reverse-l-block";
   // const blockType = 't-block';
   return createBlock(blockType);
 }
@@ -83,98 +91,213 @@ function createBlock(type) {
   const blockHeight = 40;
   let parts = [];
   const friction = 0;
+  const strokeColor = "black";
 
   switch (type) {
-      case 'square':
-          console.log("Square-Block");
-          parts =[ 
-              Bodies.rectangle(x, y, blockWidth, blockWidth),
-              Bodies.rectangle(x + blockWidth, y, blockWidth, blockWidth),
-              Bodies.rectangle(x, y + blockWidth, blockWidth, blockWidth),
-              Bodies.rectangle(x + blockWidth, y + blockWidth, blockWidth, blockWidth) 
-          ]
-          break;
-      case 'line':
-          console.log("Line-Block");
-          parts = [
-              Bodies.rectangle(x, y, blockWidth, blockHeight * 4, { friction: friction }),
-              Bodies.rectangle(x, y - blockHeight, blockWidth, 1, { friction: friction }),
-              Bodies.rectangle(x, y, blockWidth, 1, { friction: friction }),
-              Bodies.rectangle(x, y + blockHeight, blockWidth, 1, { friction: friction }),
-              // Bodies.rectangle(x, y + 1 + blockHeight, blockWidth, 1, {
-              //   friction: friction,
-              // }),
-              // Bodies.rectangle(x, y + 1 + 2 * blockHeight, blockWidth, blockHeight, {
-              //   friction: friction,
-              // }),
-              // Bodies.rectangle(x, y + 1 + 3 * blockHeight, blockWidth, blockHeight, {
-              //   friction: friction,
-              // }),
-            ];
-          break;
-      case 'reverse-l-block':
-          console.log("Reverse-L-Block");
-          parts = [
-              // Basis des L-Blocks
-              Bodies.rectangle(x, y, blockWidth, blockHeight * 3, { friction: friction }),
-              Bodies.rectangle(x, y - blockHeight / 2, blockWidth, 1, { friction: friction }),
-              Bodies.rectangle(x, y + blockHeight / 2, blockWidth, 1, { friction: friction }),
-              // Bodies.rectangle(x, y + blockHeight, blockWidth, 1, { friction: friction }),
+    case "square":
+      console.log("Square-Block");
+      parts = [
+        Bodies.rectangle(x, y, blockWidth, blockWidth, {
+          friction: friction,
+          render: {
+            lineWidth: 3,
+            strokeStyle: strokeColor,
+            fillStyle: "#FD8888",
+          },
+        }),
+        Bodies.rectangle(x + blockWidth, y, blockWidth, blockWidth, {
+          friction: friction,
+          render: {
+            lineWidth: 3,
+            strokeStyle: strokeColor,
+            fillStyle: "#FD8888",
+          },
+        }),
+        Bodies.rectangle(x, y + blockWidth, blockWidth, blockWidth, {
+          friction: friction,
+          render: {
+            lineWidth: 3,
+            strokeStyle: strokeColor,
+            fillStyle: "#FD8888",
+          },
+        }),
+        Bodies.rectangle(
+          x + blockWidth,
+          y + blockWidth,
+          blockWidth,
+          blockWidth,
+          {
+            friction: friction,
+            render: {
+              lineWidth: 3,
+              strokeStyle: strokeColor,
+              fillStyle: "#FD8888",
+            },
+          }
+        ),
+      ];
+      break;
+    case "line":
+      console.log("Line-Block");
+      parts = [
+        Bodies.rectangle(x, y, blockWidth, blockHeight * 4, {
+          friction: friction,
+          render: {
+            lineWidth: 3,
+            strokeStyle: strokeColor,
+            fillStyle: "#FFFFFF",
+          },
+        }),
+        Bodies.rectangle(x + 0, y - blockHeight, blockWidth - 1, 1, {
+          friction: friction,
+          render: { fillStyle: strokeColor },
+        }),
+        Bodies.rectangle(x + 0, y, blockWidth - 1, 1, {
+          friction: friction,
+          render: { fillStyle: strokeColor },
+        }),
+        Bodies.rectangle(x + 0, y + blockHeight, blockWidth - 1, 1, {
+          friction: friction,
+          render: { fillStyle: strokeColor },
+        }),
+        // Bodies.rectangle(x, y + 1 + blockHeight, blockWidth, 1, {
+        //   friction: friction,
+        // }),
+        // Bodies.rectangle(x, y + 1 + 2 * blockHeight, blockWidth, blockHeight, {
+        //   friction: friction,
+        // }),
+        // Bodies.rectangle(x, y + 1 + 3 * blockHeight, blockWidth, blockHeight, {
+        //   friction: friction,
+        // }),
+      ];
+      break;
+    case "reverse-l-block":
+      console.log("Reverse-L-Block");
+      parts = [
+        // Basis des L-Blocks
+        Bodies.rectangle(x, y, blockWidth, blockHeight * 3, {
+          friction: friction,
+          render: {
+            lineWidth: 3,
+            strokeStyle: strokeColor,
+            fillStyle: "#86FFA8",
+          },
+        }),
+        Bodies.rectangle(x, y - blockHeight / 2, blockWidth, 1, {
+          friction: friction,
+          render: { fillStyle: strokeColor },
+        }),
+        Bodies.rectangle(x, y - 1 + blockHeight / 2, blockWidth, 1, {
+          friction: friction,
+          render: { fillStyle: strokeColor },
+        }),
+        // Bodies.rectangle(x, y + blockHeight, blockWidth, 1, { friction: friction }),
 
+        // // Basis des L-Blocks
+        // Bodies.rectangle(x, y, blockWidth, blockHeight, { render: { fillStyle: 'green' } }),
+        // Bodies.rectangle(x, y + 1 + blockHeight, blockWidth, blockHeight, { render: { fillStyle: 'green' } }),
+        // Bodies.rectangle(x, y + 1 + 2 * blockHeight, blockWidth, blockHeight, { render: { fillStyle: 'green' } }),
+        // // Kurzer Arm des L-Blocks
+        Bodies.rectangle(
+          x - blockWidth,
+          y + blockHeight,
+          blockWidth,
+          blockHeight,
+          {
+            render: {
+              lineWidth: 3,
+              strokeStyle: strokeColor,
+              fillStyle: "#86FFA8",
+            },
+          }
+        ),
+      ];
+      break;
+    case "l-block":
+      console.log("L-Block");
+      parts = [
+        Bodies.rectangle(x, y, blockWidth, blockHeight * 3, {
+          friction: friction,
+          render: {
+            lineWidth: 3,
+            strokeStyle: strokeColor,
+            fillStyle: "#FBFE87",
+          },
+        }),
+        Bodies.rectangle(x, y - blockHeight / 2, blockWidth, 1, {
+          friction: friction,
+          render: { fillStyle: strokeColor },
+        }),
+        Bodies.rectangle(x, y + blockHeight / 2, blockWidth, 1, {
+          friction: friction,
+          render: { fillStyle: strokeColor },
+        }),
+        // Bodies.rectangle(x, y + blockHeight, blockWidth, 1, { friction: friction }),
 
+        // // Basis des L-Blocks
+        // Bodies.rectangle(x, y, blockWidth, blockHeight, { render: { fillStyle: 'green' } }),
+        // Bodies.rectangle(x, y + 1 + blockHeight, blockWidth, blockHeight, { render: { fillStyle: 'green' } }),
+        // Bodies.rectangle(x, y + 1 + 2 * blockHeight, blockWidth, blockHeight, { render: { fillStyle: 'green' } }),
+        // // Kurzer Arm des L-Blocks
+        Bodies.rectangle(
+          x + blockWidth,
+          y + blockHeight,
+          blockWidth,
+          blockHeight,
+          {
+            render: {
+              lineWidth: 3,
+              strokeStyle: strokeColor,
+              fillStyle: "#FBFE87",
+            },
+          }
+        ),
+      ];
+      break;
+    case "t-block":
+      console.log("T-Block");
+      parts = [
+        // Basis des T-Blocks
+        Bodies.rectangle(x, y, blockWidth * 3, blockHeight, {
+          friction: friction,
+          render: {
+            lineWidth: 3,
+            strokeStyle: strokeColor,
+            fillStyle: "#5ECFFF",
+          },
+        }),
+        Bodies.rectangle(x - blockWidth / 2, y, 0.5, blockWidth, {
+          friction: friction,
+          render: { fillStyle: strokeColor },
+        }),
+        Bodies.rectangle(x + blockWidth / 2, y, 0.5, blockWidth, {
+          friction: friction,
+          render: { fillStyle: strokeColor },
+        }),
 
-              // // Basis des L-Blocks
-              // Bodies.rectangle(x, y, blockWidth, blockHeight, { render: { fillStyle: 'green' } }),
-              // Bodies.rectangle(x, y + 1 + blockHeight, blockWidth, blockHeight, { render: { fillStyle: 'green' } }),
-              // Bodies.rectangle(x, y + 1 + 2 * blockHeight, blockWidth, blockHeight, { render: { fillStyle: 'green' } }),
-              // // Kurzer Arm des L-Blocks
-              Bodies.rectangle(x - blockWidth, y +  blockHeight, blockWidth, blockHeight, { render: { strokeStyle: 'green' } })
-          ];
-          break;
-      case 'l-block':
-              console.log("L-Block");
-              parts = [
-                  Bodies.rectangle(x, y, blockWidth, blockHeight * 3, { friction: friction }),
-                  Bodies.rectangle(x, y - blockHeight / 2, blockWidth, 1, { friction: friction }),
-                  Bodies.rectangle(x, y + blockHeight / 2, blockWidth, 1, { friction: friction }),
-                  // Bodies.rectangle(x, y + blockHeight, blockWidth, 1, { friction: friction }),
-
-
-
-                  // // Basis des L-Blocks
-                  // Bodies.rectangle(x, y, blockWidth, blockHeight, { render: { fillStyle: 'green' } }),
-                  // Bodies.rectangle(x, y + 1 + blockHeight, blockWidth, blockHeight, { render: { fillStyle: 'green' } }),
-                  // Bodies.rectangle(x, y + 1 + 2 * blockHeight, blockWidth, blockHeight, { render: { fillStyle: 'green' } }),
-                  // // Kurzer Arm des L-Blocks
-                  Bodies.rectangle(x + blockWidth, y +  blockHeight, blockWidth, blockHeight, { render: { sprite: { texture: 'large-green-square_1f7e9.png'} } })
-              ];
-          break;    
-      case 't-block':
-          console.log("T-Block");
-          parts = [
-              // Basis des T-Blocks
-              Bodies.rectangle(x, y, blockWidth * 3, blockHeight, { friction: friction }),
-              Bodies.rectangle(x - blockWidth / 2, y, 0.5, blockWidth, { friction: friction }),
-              Bodies.rectangle(x + blockWidth / 2, y, 0.5, blockWidth, { friction: friction }),
-
-
-              // Bodies.rectangle(x, y, blockWidth, blockHeight, { render: { fillStyle: 'blue' } }),
-              // Bodies.rectangle(x - 1 - blockWidth, y, blockWidth, blockHeight, { render: { fillStyle: 'blue' } }),
-              // Bodies.rectangle(x + 1 + blockWidth, y, blockWidth, blockHeight, { render: { fillStyle: 'blue' } }),
-              // Mitte des T-Blocks
-              Bodies.rectangle(x, y + blockHeight, blockWidth, blockHeight, { render: { fillStyle: 'blue' } })
-          ];
-          break;
-      case 'test-block':
-          console.log("Test-Block");
-          parts = [Bodies.rectangle(x, y, blockWidth, blockWidth),]
+        // Bodies.rectangle(x, y, blockWidth, blockHeight, { render: { fillStyle: 'blue' } }),
+        // Bodies.rectangle(x - 1 - blockWidth, y, blockWidth, blockHeight, { render: { fillStyle: 'blue' } }),
+        // Bodies.rectangle(x + 1 + blockWidth, y, blockWidth, blockHeight, { render: { fillStyle: 'blue' } }),
+        // Mitte des T-Blocks
+        Bodies.rectangle(x, y + blockHeight, blockWidth, blockHeight, {
+          render: {
+            lineWidth: 3,
+            strokeStyle: strokeColor,
+            fillStyle: "#5ECFFF",
+          },
+        }),
+      ];
+      break;
+    case "test-block":
+      console.log("Test-Block");
+      parts = [Bodies.rectangle(x, y, blockWidth, blockWidth)];
   }
 
   const block = Body.create({
-      parts: parts,
-      isStatic: false
+    parts: parts,
+    isStatic: false,
   });
-  
+
   block.isControllable = true;
   block.hasCollided = false;
   // block.mass = 1;
@@ -186,11 +309,9 @@ function createBlock(type) {
 // Erster Block
 // let currentBlock = createRandomBlock();
 
-// Event-Listener für Tastatureingaben
-
 // Globale Variable, um das Block-Spawning zu steuern
 let spawnBlocks = true;
-console.log(spawnBlocks);
+// console.log(spawnBlocks);
 // Kollisionserkennung
 Events.on(engine, "collisionStart", (event) => {
   event.pairs.forEach((pair) => {
@@ -204,9 +325,9 @@ Events.on(engine, "collisionStart", (event) => {
           blocks.splice(index, 1); // Entfernen des Blocks aus der Liste
 
           if (block === currentBlock) {
-            console.log(
-              "Ein fallender Block hat den Boden berührt und wurde entfernt."
-            );
+            // console.log(
+            //   "Ein fallender Block hat den Boden berührt und wurde entfernt."
+            // );
             if (spawnBlocks) {
               currentBlock = createRandomBlock(); // Erzeugen eines neuen Blocks
             }
@@ -231,9 +352,21 @@ Events.on(engine, "collisionStart", (event) => {
           }
         }
 
-        if (pair.bodyA !== ground && pair.bodyA !== ground && pair.bodyA !== leftWall && pair.bodyA !== rightWall && pair.bodyB !== leftWall && pair.bodyB !== rightWall) {
+        if (
+          pair.bodyA !== ground &&
+          pair.bodyA !== ground &&
+          pair.bodyA !== leftWall &&
+          pair.bodyA !== rightWall &&
+          pair.bodyB !== leftWall &&
+          pair.bodyB !== rightWall
+        ) {
           blocks.forEach(() => {
-            if (!block.hasCollided && block.parts.some((part) => part === pair.bodyA || part === pair.bodyB)) {
+            if (
+              !block.hasCollided &&
+              block.parts.some(
+                (part) => part === pair.bodyA || part === pair.bodyB
+              )
+            ) {
               block.hasCollided = true; // Setze die Kollisionsflagge
               console.log("Zwei Blöcke haben kollidiert.");
               // Führen Sie hier die gewünschte Aktion aus
@@ -277,8 +410,6 @@ function test(value, startLow, startHigh, endLow, endHigh, reverse) {
   return cache;
 }
 
-
-
 let lastPalmCenter = null;
 let lastChangeTime = Date.now();
 let spawnTimer = null;
@@ -286,14 +417,14 @@ let spawnTimer = null;
 function updateBlockPosition() {
   if (currentBlock && currentBlock.isControllable) {
     // console.log("Yes");
-    const palmCenter = canvasWidth - test(palmBaseCenterX, 0, 1, 0, canvasWidth, false);
-    console.log("palmBaseCenterX:",palmCenter);
+    const palmCenter =
+      canvasWidth - test(palmBaseCenterX, 0, 1, 0, canvasWidth, false);
+    // console.log("palmBaseCenterX:", palmCenter);
     // Verwenden Sie die Handposition, um die X-Position des Blocks zu setzen
     Body.setPosition(currentBlock, {
       x: palmCenter,
-      y: currentBlock.position.y
+      y: currentBlock.position.y,
     });
-
 
     // code zum resetten des games
     if (lastPalmCenter !== palmCenter) {
@@ -305,12 +436,12 @@ function updateBlockPosition() {
       spawnTimer = setTimeout(() => {
         spawnBlocks = false;
         console.log("Blockspawning deaktiviert.");
-      }, 10000); // 10 Sekunden
+        wasGestureRecognized2 = false;
+      }, 2000); // 10 Sekunden
     }
     // Optional: weitere Steuerungen basierend auf Gesten oder Bewegungen
   }
 }
-
 
 let wasGestureRecognized = false;
 let wasGestureRecognized2 = false;
@@ -323,23 +454,31 @@ function updateBlockRotation() {
     }
     wasGestureRecognized = fist; // Aktualisieren der Hilfsvariable
   }
-  if(fist === false) wasGestureRecognized = false;
+  if (fist === false) wasGestureRecognized = false;
 }
-
 
 // Ihre Animationsschleife
 (function run() {
   Engine.update(engine, 1000 / 60);
   Render.world(render);
-  //   console.log(vneiwdjlfdgswopg);
-  if (vneiwdjlfdgswopg) {
+  //   console.log(actualise);
+  if (actualise) {
     updateBlockPosition(); // Aktualisiert die Position des Blocks basierend auf der Handposition
     updateBlockRotation();
   }
-  if(victory && !wasGestureRecognized2) {
+  if (victory && !wasGestureRecognized2) {
+    // spawnBlocks = true;
     currentBlock = createRandomBlock();
     wasGestureRecognized2 = true;
+    victory = false;
   }
 
   requestAnimationFrame(run);
 })();
+
+setInterval(() => {
+  console.log("");
+  console.log("victory:", victory);
+  console.log("wasGestureRecognized2:", wasGestureRecognized2);
+  console.log("spawnBlocks:", spawnBlocks);
+}, 2000);
