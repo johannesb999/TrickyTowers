@@ -358,6 +358,9 @@ function handleGameLogic() {
     case "thumb_up":
       thumbsUp();
       break;
+    case "thumb_down":
+      thumbs_domwn();
+      break;
     // Weitere Gesten können hier hinzugefügt werden
     default:
       // Aktion für nicht erkannte oder keine Geste
@@ -366,62 +369,17 @@ function handleGameLogic() {
 
   // Bewegungen handhaben
   if (currentMovement === "right") {
+    console.log("right");
     moveBlockRight();
   } else if (currentMovement === "left") {
+    console.log("left");
     moveBlockLeft();
   }
 }
 
-let movementHistory = []; // Historie der Bewegungen speichern
-// Auswahl einer spezifischen Landmarke für präzisere Bewegungserkennung
-const MIDDLE_FINGER_TIP_INDEX = 12; // Index für die Spitze des Mittelfingers
-
-function interpretGesture(landmarks) {
-  const middleFingerTip = landmarks[0][MIDDLE_FINGER_TIP_INDEX]; // Mittelfingerspitze
-
-  // Bewegungslogik basierend auf der spezifischen Landmarke
-  if (Math.abs(middleFingerTip.x - lastAverageX) > threshold) {
-    currentMovement = middleFingerTip.x > lastAverageX ? "right" : "left";
-    lastAverageX = middleFingerTip.x;
-  } else {
-    currentMovement = "none";
-  }
-
-  addMovementToHistory(currentMovement);
-
-  function checkForWaveGesture() {
-    if (movementHistory.length < 3) {
-      return false;
-    }
-
-    const lastThreeMovements = movementHistory.slice(-3);
-    const isWaving =
-      lastThreeMovements[0] !== lastThreeMovements[1] &&
-      lastThreeMovements[1] === lastThreeMovements[2];
-
-    console.log(
-      "Letzte drei Bewegungen:",
-      lastThreeMovements,
-      "Winken:",
-      isWaving
-    );
-
-    return isWaving;
-  }
-
-  // Aktualisieren Sie Ihre Bewegungserkennungslogik
-  function interpretGesture(landmarks) {
-    // ... Ihre bestehende Logik ...
-
-    console.log("Aktuelle Bewegung:", currentMovement);
-
-    if (checkForWaveGesture()) {
-      console.log("Winken erkannt!");
-    }
-  }
+function thumbs_domwn() {
+  thumbDown = true;
 }
-
-/* G  */
 
 function thumbsUp() {
   // console.log("Johannes ist dumm");
@@ -449,6 +407,9 @@ function victoryAction() {
 function noGestureAction() {
   // console.log("Keine Geste erkannt");
   fist = false;
+  victory = false;
+  thumbUp = false;
+  thumbDown = false;
   // Fügen Sie hier Ihre Logik für keine oder nicht spezifische Geste ein
 }
 

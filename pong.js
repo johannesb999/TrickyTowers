@@ -8,7 +8,7 @@ let currentBlock;
 const engine = Engine.create();
 engine.world.gravity.y = fallSpeed; // Anpassen der Gravitation
 // engine.render.options.background = "white";
-
+let isGameActive = true;
 // Erstellen des Renderers
 
 const render = Render.create({
@@ -300,7 +300,7 @@ function createBlock(type) {
 
   block.isControllable = true;
   block.hasCollided = false;
-  // block.mass = 1;
+  block.mass = 1;
   World.add(engine.world, [block]);
   blocks.push(block);
   return block;
@@ -425,7 +425,6 @@ function updateBlockPosition() {
       x: palmCenter,
       y: currentBlock.position.y,
     });
-
     // code zum resetten des games
     if (lastPalmCenter !== palmCenter) {
       lastPalmCenter = palmCenter;
@@ -437,11 +436,18 @@ function updateBlockPosition() {
         spawnBlocks = false;
         console.log("Blockspawning deaktiviert.");
         wasGestureRecognized2 = false;
-      }, 2000); // 10 Sekunden
+      }, 5000); // 10 Sekunden
+    }
+    if (thumbDown) {
+      fallSpeed = 10;
+      console.log(fallspeed);
+    } else {
+      fallspeed = 0.2;
     }
     // Optional: weitere Steuerungen basierend auf Gesten oder Bewegungen
   }
 }
+function resetGame() {}
 
 let wasGestureRecognized = false;
 let wasGestureRecognized2 = false;
@@ -467,7 +473,7 @@ function updateBlockRotation() {
     updateBlockRotation();
   }
   if (victory && !wasGestureRecognized2) {
-    // spawnBlocks = true;
+    spawnBlocks = true;
     currentBlock = createRandomBlock();
     wasGestureRecognized2 = true;
     victory = false;
