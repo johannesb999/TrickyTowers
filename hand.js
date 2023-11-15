@@ -281,7 +281,8 @@ async function predictWebcam() {
 
   canvasCtx.restore();
   if (results.gestures.length > 0) {
-    console.log("äuft");
+    // console.log("äuft");
+    äuft = true;
     document.getElementById("gifBox").style.display = "none";
     document.getElementById("gifBox2").style.display = "none";
     gestureOutput.style.display = "block";
@@ -296,6 +297,7 @@ async function predictWebcam() {
     // gestureOutput.innerText = `GestureRecognizer: ${categoryName}\n Confidence: ${categoryScore} %\n Handedness: ${handedness}`;
     currentGestureName = results.gestures[0][0].categoryName.toLowerCase();
   } else {
+    äuft = false;
     gestureOutput.style.display = "none";
     currentGestureName = "none";
   }
@@ -402,7 +404,7 @@ function fistAction() {
 }
 
 function victoryAction() {
-  console.log("Victory Geste erkannt");
+  // console.log("Victory Geste erkannt");
   thumbUp = true;
   // Fügen Sie hier Ihre Victory spezifische Logik ein
 }

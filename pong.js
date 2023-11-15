@@ -40,23 +40,35 @@ const ground = Bodies.rectangle(
   { isStatic: true }
 );
 
-let part = [
-  Bodies.rectangle(
-    canvasWidth / 2,
-    platformY + platformHeight,
-    platformWidth / 6,
-    platformHeight * 2.8,
-    { render: { fillStyle: "#585858" } }
-  ),
-  Bodies.rectangle(canvasWidth / 2, platformY, platformWidth, platformHeight, {
-    render: { fillStyle: "#585858" },
-  }),
-];
+let platform;
 
-const platform = Body.create({
-  parts: part,
-  isStatic: true,
-});
+// creatPlatform();
+function creatPlatform() {
+  let part = [
+    Bodies.rectangle(
+      canvasWidth / 2,
+      platformY + platformHeight,
+      platformWidth / 6,
+      platformHeight * 2.8,
+      { render: { fillStyle: "#585858" } }
+    ),
+    Bodies.rectangle(
+      canvasWidth / 2,
+      platformY,
+      platformWidth,
+      platformHeight,
+      {
+        render: { fillStyle: "#585858" },
+      }
+    ),
+  ];
+
+  platform = Body.create({
+    parts: part,
+    isStatic: true,
+  });
+  World.add(engine.world, [platform]);
+}
 const leftWall = Bodies.rectangle(0, canvasHeight / 2, 10, canvasHeight, {
   isStatic: true,
 });
@@ -69,7 +81,7 @@ const rightWall = Bodies.rectangle(
 );
 
 // Hinzufügen von Boden und Wänden zur Welt
-World.add(engine.world, [ground, platform, leftWall, rightWall]);
+World.add(engine.world, [ground, leftWall, rightWall]);
 
 // Liste der Blöcke
 let blocks = [];
@@ -454,6 +466,8 @@ function updateBlockPosition() {
       // Timer zurücksetzen
       clearTimeout(spawnTimer);
       spawnTimer = setTimeout(() => {
+        document.getElementById("gifBox").style.display = "block";
+        document.getElementById("gifBox2").style.display = "block";
         resetGame();
         console.log("Blockspawning deaktiviert.");
       }, 7000); // 10 Sekunden
@@ -474,8 +488,7 @@ function resetGame() {
   // });
   spawnBlocks = false;
   wasGestureRecognized2 = false;
-  document.getElementById("gifBox").style.display = "block";
-  document.getElementById("gifBox2").style.display = "block";
+  platform.isStatic = false;
 }
 
 let wasGestureRecognized = false;
@@ -504,6 +517,7 @@ function updateBlockRotation() {
   if (victory && !wasGestureRecognized2) {
     spawnBlocks = true;
     currentBlock = createRandomBlock();
+    creatPlatform();
     wasGestureRecognized2 = true;
     victory = false;
   }
@@ -518,3 +532,44 @@ setInterval(() => {
   // console.log("wasGestureRecognized2:", wasGestureRecognized2);
   // console.log("spawnBlocks:", spawnBlocks);
 }, 2000);
+
+let stackedBlocksCount = 0;
+
+Events.on(engine, "collisionStart", (event) => {
+  event.pairs.forEach((pair) => {
+    blocks.forEach((block, index) => {
+      if (
+        block.parts.some((part) => part === pair.bodyA || part === pair.bodyB)
+      ) {
+        if (pair.bodyA === ground || pair.bodyB === ground) {
+          // Logik für Kollision mit dem Boden
+          if (!block.hasCollided) {
+            block.hasCollided = true;
+            stackedBlocksCount++; // Erhöhe die Anzahl der gestapelten Blöcke
+          }
+        }
+      }
+    });
+  });
+});
+
+function drawStackCount() {
+  const ctx = render.context;
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "white";
+  ctx.fillText(`Gestapelte Blöcke: ${stackedBlocksCount}`, 10, 30);
+}
+(function run() {
+  Engine.update(engine, 1000 / 60);
+  Render.world(render);
+
+  if (actualise) {
+    updateBlockPosition();
+    updateBlockRotation();
+  }
+
+  // Zeichne die Anzahl der gestapelten Blöcke in jedem Frame
+  drawStackCount();
+
+  requestAnimationFrame(run);
+})();
