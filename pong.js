@@ -158,9 +158,9 @@ const blockTypes = [
   "reverse-l-block",
   "reverse-l-block", // 4x reverse-l-block
   "special-block", // 1x special-block
-  "special-block", // 1x special-block
-  "special-block", // 1x special-block
-  "special-block", // 1x special-block
+  // "special-block", // 1x special-block
+  // "special-block", // 1x special-block
+  // "special-block", // 1x special-block
 ];
 // Funktion, um zufällig einen Blocktyp auszuwählen
 function getRandomBlockType() {
@@ -440,6 +440,8 @@ function spawnFlyingBlocks(numberOfBlocks) {
 
     const nichtBlock = Bodies.rectangle(x, y, 40, 40, {
       render: { fillStyle: randomColorArray[colorIndex] },
+      isSensor: true,
+      isSleeping,
     }); // Größe des nichtBlocks festlegen
     Body.setVelocity(nichtBlock, { x: speed, y: 0 }); // Geschwindigkeit setzen
 
@@ -644,6 +646,7 @@ function resetGame() {
   setTimeout(() => {
     document.getElementById("gifBox").style.display = "block";
     document.getElementById("gifBox2").style.display = "block";
+    document.getElementById("titel").style.display = "block";
     startStopLoop();
   }, 2000);
 
@@ -683,6 +686,10 @@ let thumbCheck = false;
     updateBlockRotation();
   }
   if (victory && !wasGestureRecognized2) {
+    blocks.forEach((block) => {
+      block.isSensor = true;
+    });
+    blocks = [];
     spawnBlocks = true;
     currentBlock = createRandomBlock();
     creatPlatform();

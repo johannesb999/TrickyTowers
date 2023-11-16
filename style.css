@@ -1,13 +1,13 @@
 html {
   background-color: #000000;
   font-family: "Inter", sans-serif;
-  font-family: "Titillium Web", sans-serif;
+  /* font-family: "Titillium Web", sans-serif; */
 }
 #gifBox2 {
   position: absolute;
-  top: 1300px;
+  top: 1050px;
   /* 1300 */
-  left: 150px;
+  left: 280px;
   transform: scaleX(-1);
 }
 
@@ -15,7 +15,7 @@ html {
   position: absolute;
   top: 600px;
   /* 700 */
-  left: 150px;
+  left: 290px;
   transform: scaleX(-1);
 }
 
@@ -41,10 +41,31 @@ html {
   width: 1080px;
   height: auto;
 }
-h1 {
+#anweisung {
   color: white;
   position: absolute;
-  top: 400px;
-  left: 430px;
-  font-size: 30px;
+  top: 1500px;
+  left: 450px;
+  font-size: 40px;
 }
+#anweisung2 {
+  color: white;
+  position: absolute;
+  top: 1555px;
+  left: 400px;
+  font-size: 40px;
+}
+/* #anweisung {
+  color: white;
+  position: absolute;
+  top: 170px;
+  left: 30px;
+  font-size: 80px;
+}
+#anweisung2 {
+  color: white;
+  position: absolute;
+  top: 250px;
+  left: 30px;
+  font-size: 80px;
+} */

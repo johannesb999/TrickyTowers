@@ -316,6 +316,7 @@ async function predictWebcam() {
     setTimeout(() => {
       document.getElementById("gifBox").style.display = "none";
       document.getElementById("gifBox2").style.display = "none";
+      document.getElementById("titel").style.display = "none";
     }, 4000);
     gestureOutput.style.display = "block";
     gestureOutput.style.position = "absolute";
