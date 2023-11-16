@@ -1,7 +1,7 @@
 const { Engine, Render, World, Bodies, Body, Events } = Matter;
 
 // Globale Variable für die Fallgeschwindigkeit
-let fallSpeed = 0.1; // Standardwert, kann angepasst werden
+let fallSpeed = 0.35; // Standardwert, kann angepasst werden
 // import { hand } from "./hand.js";
 let currentBlock;
 // Erstellen des Engines
@@ -25,7 +25,7 @@ const render = Render.create({
 // Dicke des Bodens
 const groundHeight = 60;
 // Größe und Position der Plattform
-const platformWidth = canvasWidth / 3;
+const platformWidth = canvasWidth / 2;
 const platformHeight = 30; // Angenommene Dicke der Plattform
 const blockHeight = 20; // Angenommene Höhe eines Blocks
 const platformY =
@@ -45,30 +45,30 @@ let platform;
 // creatPlatform();
 function creatPlatform() {
   // let part = [
-    stump = Bodies.rectangle(
-      canvasWidth / 2,
-      platformY + platformHeight,
-      platformWidth / 6,
-      platformHeight * 2.8,
-      { render: { fillStyle: "#585858" }, isStatic: true}
-    ),
-    platform = Bodies.rectangle(
-      canvasWidth / 2,
-      platformY,
-      platformWidth,
-      platformHeight,
-      {
-        render: { fillStyle: "#585858" },
-        isStatic: true
-      }
-    ),
-  // ];
+  // (stump = Bodies.rectangle(
+  //   canvasWidth / 2,
+  //   platformY + platformHeight,
+  //   platformWidth / 6,
+  //   platformHeight * 2.8
+  //   // { render: { fillStyle: "#785188" }, isStatic: true }
+  // )),
+  (platform = Bodies.rectangle(
+    canvasWidth / 2,
+    platformY,
+    platformWidth,
+    platformHeight,
+    {
+      render: { fillStyle: "#848484" },
+      isStatic: true,
+    }
+  )),
+    // ];
 
-  // platform = Body.create({
-  //   parts: part,
-  //   isStatic: true,
-  // });
-  World.add(engine.world, [platform, stump]);
+    // platform = Body.create({
+    //   parts: part,
+    //   isStatic: true,
+    // });
+    World.add(engine.world, [platform]);
 }
 const axisWidth = 10; // Breite der Achse
 // const axisHeight = canvasHeight - (platformY - platformHeight / 2);
@@ -81,19 +81,25 @@ const axisBottomY = platformY - platformHeight / 2; // Obere Kante der Plattform
 const axisHeight = axisBottomY - axisTopY; // Höhe der Achse
 
 // Erstellen und Hinzufügen der Achse zur Welt
-const axis = Bodies.rectangle(axisX, axisTopY + (axisHeight / 2), axisWidth, axisHeight, { isStatic: true, isSensor: true });
-World.add(engine.world, [ground, axis]);
+const axis = Bodies.rectangle(
+  axisX,
+  axisTopY + axisHeight / 2,
+  axisWidth,
+  axisHeight,
+  { isStatic: true, isSensor: true }
+);
+World.add(engine.world, [ground]);
 
 // Nachdem die Achse erstellt und zur Welt hinzugefügt wurde
 const axisContext = render.context;
 
 // Zeichnen der Zahl '0' am unteren Ende der Achse
-axisContext.fillStyle = 'black';
-axisContext.font = '20px Arial';
-axisContext.fillText('0', axisX - 10, canvasHeight - 10);
+axisContext.fillStyle = "black";
+axisContext.font = "20px Arial";
+axisContext.fillText("0", axisX - 10, canvasHeight - 10);
 
 // Zeichnen der Zahl '45' am oberen Ende der Achse
-axisContext.fillText('45', axisX - 25, 20);
+axisContext.fillText("45", axisX - 25, 20);
 
 // console.error(platformHeight);
 // console.error(canvasHeight);
@@ -136,12 +142,13 @@ function getRandomBlockType() {
 
 // Modifizierte Funktion zum Erstellen eines neuen Blocks
 function createRandomBlock() {
-  const blockType = getRandomBlockType();
-  //   const blockType = "square";
+  // const blockType = getRandomBlockType();
+  // const blockType = "square";
   // const blockType = "line";
   // const blockType = "l-block";
   // const blockType = "reverse-l-block";
   // const blockType = 't-block';
+  const blockType = "special-block";
   return createBlock(blockType);
 }
 
@@ -165,7 +172,7 @@ function createBlock(type) {
           render: {
             lineWidth: 3,
             strokeStyle: strokeColor,
-            fillStyle: "#FD8888",
+            fillStyle: "#C900A8",
           },
         }),
         Bodies.rectangle(x + blockWidth, y, blockWidth, blockWidth, {
@@ -173,7 +180,7 @@ function createBlock(type) {
           render: {
             lineWidth: 3,
             strokeStyle: strokeColor,
-            fillStyle: "#FD8888",
+            fillStyle: "#C900A8",
           },
         }),
         Bodies.rectangle(x, y + blockWidth, blockWidth, blockWidth, {
@@ -181,7 +188,7 @@ function createBlock(type) {
           render: {
             lineWidth: 3,
             strokeStyle: strokeColor,
-            fillStyle: "#FD8888",
+            fillStyle: "#C900A8",
           },
         }),
         Bodies.rectangle(
@@ -194,7 +201,7 @@ function createBlock(type) {
             render: {
               lineWidth: 3,
               strokeStyle: strokeColor,
-              fillStyle: "#FD8888",
+              fillStyle: "#C900A8",
             },
           }
         ),
@@ -208,7 +215,7 @@ function createBlock(type) {
           render: {
             lineWidth: 3,
             strokeStyle: strokeColor,
-            fillStyle: "#FFFFFF",
+            fillStyle: "#009BF5",
           },
         }),
         Bodies.rectangle(x + 0, y - blockHeight, blockWidth - 1, 1, {
@@ -243,7 +250,7 @@ function createBlock(type) {
           render: {
             lineWidth: 3,
             strokeStyle: strokeColor,
-            fillStyle: "#86FFA8",
+            fillStyle: "#7DC300",
           },
         }),
         Bodies.rectangle(x, y - blockHeight / 2, blockWidth, 1, {
@@ -270,7 +277,7 @@ function createBlock(type) {
             render: {
               lineWidth: 3,
               strokeStyle: strokeColor,
-              fillStyle: "#86FFA8",
+              fillStyle: "#7DC300",
             },
           }
         ),
@@ -284,7 +291,7 @@ function createBlock(type) {
           render: {
             lineWidth: 3,
             strokeStyle: strokeColor,
-            fillStyle: "#FBFE87",
+            fillStyle: "#FF6400",
           },
         }),
         Bodies.rectangle(x, y - blockHeight / 2, blockWidth, 1, {
@@ -311,7 +318,7 @@ function createBlock(type) {
             render: {
               lineWidth: 3,
               strokeStyle: strokeColor,
-              fillStyle: "#FBFE87",
+              fillStyle: "#FF6400",
             },
           }
         ),
@@ -326,7 +333,7 @@ function createBlock(type) {
           render: {
             lineWidth: 3,
             strokeStyle: strokeColor,
-            fillStyle: "#5ECFFF",
+            fillStyle: "#544BAD",
           },
         }),
         Bodies.rectangle(x - blockWidth / 2, y, 0.5, blockWidth, {
@@ -346,7 +353,7 @@ function createBlock(type) {
           render: {
             lineWidth: 3,
             strokeStyle: strokeColor,
-            fillStyle: "#5ECFFF",
+            fillStyle: "#544BAD",
           },
         }),
       ];
@@ -354,6 +361,14 @@ function createBlock(type) {
     case "test-block":
       console.log("Test-Block");
       parts = [Bodies.rectangle(x, y, blockWidth, blockWidth)];
+      break;
+    case "special-block":
+      parts = [
+        Bodies.rectangle(x, y, platformWidth / 2, blockHeight, {
+          render: { fillStyle: "red" },
+        }),
+      ];
+      break;
   }
 
   const block = Body.create({
@@ -367,20 +382,32 @@ function createBlock(type) {
   World.add(engine.world, [block]);
   blocks.push(block);
   return block;
+  // updateColorLabel;
 }
 
+const randomColorArray = [
+  "#FF6400",
+  "#7DC300",
+  "#C900A8",
+  "#544BAD",
+  "#009BF5",
+];
 
 function spawnFlyingBlocks(numberOfBlocks) {
-  console.log("spwan blocks");
   let nichtBlocks = [];
   for (let i = 0; i < numberOfBlocks; i++) {
     // Zufällige Positionen und Geschwindigkeiten für die Blöcke festlegen
     const x = i % 2 === 0 ? 0 : canvasWidth; // Blöcke von links oder rechts starten
-    const y = (Math.random() * canvasHeight) + 150; // Zufällige Höhe
+    const y = Math.random() * canvasHeight + 150; // Zufällige Höhe
 
-    const speed = (Math.random() * 5) * (i % 2 === 0 ? 1 : -1); // Geschwindigkeit nach rechts oder links
+    const speed = Math.random() * 5 * (i % 2 === 0 ? 2 : -2); // Geschwindigkeit nach rechts oder links
 
-    const nichtBlock = Bodies.rectangle(x, y, 40, 40); // Größe des nichtBlocks festlegen
+    const colorIndex = Math.round(Math.random() * randomColorArray.length - 1);
+    // console.log(colorIndex);
+
+    const nichtBlock = Bodies.rectangle(x, y, 40, 40, {
+      render: { fillStyle: randomColorArray[colorIndex] },
+    }); // Größe des nichtBlocks festlegen
     Body.setVelocity(nichtBlock, { x: speed, y: 0 }); // Geschwindigkeit setzen
 
     World.add(engine.world, nichtBlock); // Block zur Welt hinzufügen
@@ -412,20 +439,20 @@ function startStopLoop() {
 function loopFunction() {
   if (isLoopRunning) {
     spawnFlyingBlocks(10); // Erzeuge 10 fliegende Blöcke
-    setTimeout(loopFunction, 200); // Setze den Loop alle 5 Sekunden fort
+    setTimeout(loopFunction, 150); // Setze den Loop alle 5 Sekunden fort
   }
 }
 
 // Funktion aufrufen, um beispielsweise 10 Blöcke zu generieren
 // spawnFlyingBlocks(10);
 
-document.addEventListener('keydown', (event) => {
+document.addEventListener("keydown", (event) => {
   // if (!currentBlock.isControllable) return;
 
   const { keyCode } = event;
   switch (keyCode) {
-      case 37: // Linke Pfeiltaste
-        spawnFlyingBlocks(10);
+    case 37: // Linke Pfeiltaste
+      updateDemoBlocks();
       break;
   }
 });
@@ -486,8 +513,9 @@ Events.on(engine, "collisionStart", (event) => {
 
         if (
           pair.bodyA !== ground &&
-          pair.bodyA !== ground 
-          // &&
+          pair.bodyA !== ground &&
+          pair.bodyA != axis &&
+          pair.bodyB != axis
           // pair.bodyA !== leftWall &&
           // pair.bodyA !== rightWall &&
           // pair.bodyB !== leftWall &&
@@ -571,7 +599,7 @@ function updateBlockPosition() {
         setTimeout(() => {
           document.getElementById("gifBox").style.display = "block";
           document.getElementById("gifBox2").style.display = "block";
-        },2000);
+        }, 2000);
         startStopLoop();
         resetGame();
         console.log("Blockspawning deaktiviert.");
@@ -588,13 +616,11 @@ function updateBlockPosition() {
   }
 }
 function resetGame() {
-  // blocks.forEach((block) => {
-  //   World.remove(engine.world, block);
-  // });
+  // createDemoBlocks(true);
   spawnBlocks = false;
   wasGestureRecognized2 = false;
   platform.isStatic = false;
-  stump.isStatic = false;
+  // stump.isStatic = false;
 }
 
 let wasGestureRecognized = false;
@@ -626,6 +652,7 @@ let thumbCheck = false;
     currentBlock = createRandomBlock();
     creatPlatform();
     startStopLoop();
+    // createDemoBlocks(false);
     wasGestureRecognized2 = true;
     victory = false;
   }
@@ -650,36 +677,39 @@ function calculateTowerHeightInBlocks() {
   let highestBlock = null;
   let minHeight = canvasHeight;
 
-  blocks.forEach(block => {
-      if (block.hasCollided && block.position.y < minHeight) {
-          highestBlock = block;
-          minHeight = block.position.y;
-      }
+  blocks.forEach((block) => {
+    if (block.hasCollided && block.position.y < minHeight) {
+      highestBlock = block;
+      minHeight = block.position.y;
+    }
   });
 
   if (highestBlock) {
-      // console.log("Test-Start")
-      // console.log(highestBlock.position.y);
-      // console.log(platformHeight);
-      // console.log(canvasHeight);
-      const highestY = highestBlock.position.y
-      // console.log(highestY);
-      const towerHeight = canvasHeight - platformHeight - highestY + 17;
-      // console.log(towerHeight);
-      // Teilen Sie die Gesamthöhe durch die Höhe eines Blocks
-      const heightInBlocks = (towerHeight / blockHeight) / 2;
-      return Math.round(heightInBlocks);
+    // console.log("Test-Start")
+    // console.log(highestBlock.position.y);
+    // console.log(platformHeight);
+    // console.log(canvasHeight);
+    const highestY = highestBlock.position.y;
+    // console.log(highestY);
+    const towerHeight = canvasHeight - platformHeight - highestY + 17;
+    // console.log(towerHeight);
+    // Teilen Sie die Gesamthöhe durch die Höhe eines Blocks
+    const heightInBlocks = towerHeight / blockHeight / 2;
+    return Math.round(heightInBlocks);
   }
 
   return 0;
 }
 
-
 function drawStackCount() {
   const ctx = render.context;
-  ctx.font = "16px Arial";
   ctx.fillStyle = "white";
-  ctx.fillText(`Gestapelte Blöcke: ${calculateTowerHeightInBlocks()}`, 900, 30);
+  ctx.font = "25px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText(`${calculateTowerHeightInBlocks()}`, canvasWidth - 70, 30);
+  ctx.font = "16px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText(`Gestapelte Blöcke`, canvasWidth - 70, 50);
 }
 (function run() {
   // Zeichne die Anzahl der gestapelten Blöcke in jedem Frame

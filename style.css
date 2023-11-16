@@ -1,3 +1,8 @@
+html {
+  background-color: #000000;
+  font-family: "Inter", sans-serif;
+  font-family: "Titillium Web", sans-serif;
+}
 #gifBox2 {
   position: absolute;
   top: 1500px;
@@ -22,11 +27,17 @@
   left: 30px;
 }
 
-
 #middleFingerMessage {
   position: absolute;
   color: white;
   top: 60px;
   left: 450px;
   font-size: 30px;
+}
+
+#Nils {
+  display: none;
+  position: absolute;
+  width: 1080px;
+  height: auto;
 }

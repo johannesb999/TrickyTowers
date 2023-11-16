@@ -3,6 +3,8 @@ import {
   FilesetResolver,
   DrawingUtils,
 } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
+let middleFingerRaiseStart = null;
+let timerStarted = false;
 
 const demosSection = document.getElementById("demos");
 let gestureRecognizer;
@@ -224,40 +226,33 @@ async function predictWebcam() {
   webcamElement.style.width = videoWidth;
 
   const landmarkColors = {
-
     //Handballen-Ansatz
-    // 0: "#FF0000", 
+    // 0: "#FF0000",
     //daumen
-    // 1: "#00FF00", 
-    // 2: "#0000FF", 
-    // 3: "#FFFF00", 
+    // 1: "#00FF00",
+    // 2: "#0000FF",
+    // 3: "#FFFF00",
     // 4: "#FF00FF", //Daumen-Spitze
-
     //Zeigefinger
     // 5: "#00FFFF", //Ansatz am Handballen
-    // 6: "#FFFFFF", 
-    // 7: "#000000", 
+    // 6: "#FFFFFF",
+    // 7: "#000000",
     // 8: "#FFA500", //Fingerspitze
-
     //Mittelfinger
     // 9: "#800080", //Ansatz am Handballen
-    // 10: "#008000", 
+    // 10: "#008000",
     // 11: "#808000",
     // 12: "#58FA82", //Mittelfinger-Spitze
-
     //Ringfinger
     // 13: "#008080", //Ansatz am Handballen
-    // 14: "#808080", 
-    // 15: "#000080", 
+    // 14: "#808080",
+    // 15: "#000080",
     // 16: "#FFC0CB", //Ringfinger-Spitze
-
     //Kleiner Finger
     // 17: "#800000", //Ansatz am Handballen
-    // 18: "#FE2EF7", 
+    // 18: "#FE2EF7",
     // 19: "#58ACFA",
     // 20: "#F3F781", //Kliern Finger-Spitze
-
-
     // 21: "#000000", // Schwarz für die zweiundzwanzigste Landmarke
   };
   if (results.landmarks) {
@@ -292,19 +287,26 @@ async function predictWebcam() {
     // if (landmark17) { /* Logik für landmark17 */ }
   }
 
-
   if (results.landmarks && results.landmarks[0]) {
     const middleFingerRaised = checkMiddleFingerRaised(results.landmarks[0]);
-    console.log("middleFinger:", middleFingerRaised);
+
     if (middleFingerRaised) {
-      document.getElementById('middleFingerMessage').style.display = 'block';
+      console.log(timerStarted);
+      if (!timerStarted) {
+        middleFingerRaiseStart = Date.now();
+        // console.log(middleFingerRaiseStart);
+        timerStarted = true; // Markieren, dass der Timer gestartet wurde
+      } else if (Date.now() - middleFingerRaiseStart >= 500) {
+        // Zeigt die Nachricht an, wenn der Mittelfinger mindestens fünf Sekunden lang gehoben ist
+        document.getElementById("Nils").style.display = "block";
+      }
     } else {
-      document.getElementById('middleFingerMessage').style.display = 'none';
+      // Zurücksetzen des Timers und der Markierung, wenn der Mittelfinger gesenkt wird
+      middleFingerRaiseStart = null;
+      timerStarted = false;
+      document.getElementById("Nils").style.display = "none";
     }
   }
-
-
-
 
   canvasCtx.restore();
   if (results.gestures.length > 0) {
@@ -314,7 +316,7 @@ async function predictWebcam() {
     setTimeout(() => {
       document.getElementById("gifBox").style.display = "none";
       document.getElementById("gifBox2").style.display = "none";
-    },6000)
+    }, 4000);
     gestureOutput.style.display = "block";
     gestureOutput.style.position = "absolute";
     gestureOutput.style.color = "white";
@@ -471,8 +473,10 @@ function checkMiddleFingerRaised(landmarks) {
   const middleFingerLength = (middleFingerBaseY - middleFingerTipY) / 2;
 
   // Überprüfen, ob der Mittelfinger um mindestens seine eigene Länge höher ist als die anderen Fingerspitzen und über dem Ansatz liegt
-  return middleFingerTipY + middleFingerLength < indexFingerTipY &&
-         middleFingerTipY + middleFingerLength < ringFingerTipY &&
-         middleFingerTipY + middleFingerLength < littleFingerTipY &&
-         middleFingerTipY < middleFingerBaseY; // Zusätzlich prüfen, ob die Spitze des Mittelfingers über dem Ansatz liegt
+  return (
+    middleFingerTipY + middleFingerLength < indexFingerTipY &&
+    middleFingerTipY + middleFingerLength < ringFingerTipY &&
+    middleFingerTipY + middleFingerLength < littleFingerTipY &&
+    middleFingerTipY < middleFingerBaseY
+  ); // Zusätzlich prüfen, ob die Spitze des Mittelfingers über dem Ansatz liegt
 }
