@@ -5,7 +5,11 @@ let fallSpeed = 0.35; // Standardwert, kann angepasst werden
 // import { hand } from "./hand.js";
 let currentBlock;
 // Erstellen des Engines
-const engine = Engine.create();
+const engine = Engine.create({
+  positionIterations: 6,
+  velocityIterations: 4,
+  constraintIterations: 2,
+});
 engine.world.gravity.y = fallSpeed; // Anpassen der Gravitation
 // engine.render.options.background = "white";
 
@@ -153,6 +157,7 @@ const blockTypes = [
   "reverse-l-block",
   "reverse-l-block",
   "reverse-l-block", // 4x reverse-l-block
+  "special-block", // 1x special-block
   "special-block", // 1x special-block
   "special-block", // 1x special-block
   "special-block", // 1x special-block
@@ -659,7 +664,7 @@ function updateBlockRotation() {
   if (currentBlock && currentBlock.isControllable) {
     if (fist && !wasGestureRecognized) {
       // Drehen des Blocks um 90° im Uhrzeigersinn
-      Body.rotate(currentBlock, Math.PI / 2);
+      Body.rotate(currentBlock, -Math.PI / 2);
     }
     wasGestureRecognized = fist; // Aktualisieren der Hilfsvariable
   }

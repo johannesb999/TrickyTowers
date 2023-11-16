@@ -5,15 +5,15 @@ html {
 }
 #gifBox2 {
   position: absolute;
-  top: 1500px;
+  top: 1300px;
   /* 1300 */
-  left: 350px;
+  left: 150px;
   transform: scaleX(-1);
 }
 
 #gifBox {
   position: absolute;
-  top: 900px;
+  top: 600px;
   /* 700 */
   left: 150px;
   transform: scaleX(-1);
@@ -40,4 +40,11 @@ html {
   position: absolute;
   width: 1080px;
   height: auto;
+}
+h1 {
+  color: white;
+  position: absolute;
+  top: 400px;
+  left: 430px;
+  font-size: 30px;
 }
