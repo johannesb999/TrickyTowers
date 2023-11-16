@@ -426,8 +426,8 @@ const randomColorArray = [
   "#009BF5",
 ];
 
+let nichtBlocks = [];
 function spawnFlyingBlocks(numberOfBlocks) {
-  let nichtBlocks = [];
   for (let i = 0; i < numberOfBlocks; i++) {
     // Zufällige Positionen und Geschwindigkeiten für die Blöcke festlegen
     const x = i % 2 === 0 ? 0 : canvasWidth; // Blöcke von links oder rechts starten
@@ -441,7 +441,7 @@ function spawnFlyingBlocks(numberOfBlocks) {
     const nichtBlock = Bodies.rectangle(x, y, 40, 40, {
       render: { fillStyle: randomColorArray[colorIndex] },
       isSensor: true,
-      isSleeping,
+      // isSleeping: true,
     }); // Größe des nichtBlocks festlegen
     Body.setVelocity(nichtBlock, { x: speed, y: 0 }); // Geschwindigkeit setzen
 
@@ -556,7 +556,7 @@ Events.on(engine, "collisionStart", (event) => {
               )
             ) {
               block.hasCollided = true; // Setze die Kollisionsflagge
-              console.log("Zwei Blöcke haben kollidiert.");
+              // console.log("Zwei Blöcke haben kollidiert.");
               // Führen Sie hier die gewünschte Aktion aus
               // Zum Beispiel: Deaktivieren der Steuerbarkeit beider Blöcke
               if (block.position.y <= 20) {
@@ -566,7 +566,7 @@ Events.on(engine, "collisionStart", (event) => {
                 block.isControllable = false; // Block nach 1 Sekunde nicht mehr steuerbar machen
 
                 if (block === currentBlock && spawnBlocks) {
-                  console.log("Ein fallender Block hat die Plattform berührt.");
+                  // console.log("Ein fallender Block hat die Plattform berührt.");
                   currentBlock = createRandomBlock(); // Neuen Block nach 1 Sekunde spawnen
                 }
               }, 200);
@@ -624,7 +624,7 @@ function updateBlockPosition() {
       clearTimeout(spawnTimer);
       spawnTimer = setTimeout(() => {
         resetGame();
-        console.log("Blockspawning deaktiviert.");
+        // console.log("Blockspawning deaktiviert.");
       }, 7000); // 10 Sekunden
     }
     if (thumbDown) {
@@ -677,7 +677,6 @@ function updateBlockRotation() {
 let thumbCheck = false;
 // Ihre Animationsschleife
 (function run() {
-  updateViewport();
   Engine.update(engine, 1000 / 60);
   Render.world(render);
   //   console.log(actualise);
@@ -686,6 +685,9 @@ let thumbCheck = false;
     updateBlockRotation();
   }
   if (victory && !wasGestureRecognized2) {
+    // nichtBlocks.forEach((nichtBlock) => {
+    //   nichtBlock.isSleeping = true;
+    // });
     blocks.forEach((block) => {
       block.isSensor = true;
     });
@@ -752,25 +754,3 @@ function drawStackCount() {
 
   requestAnimationFrame(run);
 })();
-
-function updateViewport() {
-  const towerHeight = calculateTowerHeightInBlocks() * blockHeight;
-  const offset = 300;
-
-  console.log("Aktuelle Turmhöhe:", towerHeight);
-  console.log("Viewport vor Update:", render.bounds.min.y, render.bounds.max.y);
-
-  if (canvasHeight - towerHeight < offset) {
-    render.bounds.min.y = towerHeight + offset - canvasHeight;
-    render.bounds.max.y = towerHeight + offset;
-  } else {
-    render.bounds.min.y = 0;
-    render.bounds.max.y = canvasHeight;
-  }
-
-  console.log(
-    "Viewport nach Update:",
-    render.bounds.min.y,
-    render.bounds.max.y
-  );
-}
