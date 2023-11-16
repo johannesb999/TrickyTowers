@@ -689,6 +689,7 @@ let thumbCheck = false;
     //   nichtBlock.isSleeping = true;
     // });
     blocks.forEach((block) => {
+      block.hasCollided = true;
       block.isSensor = true;
     });
     blocks = [];
