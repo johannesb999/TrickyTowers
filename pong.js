@@ -6,8 +6,8 @@ let fallSpeed = 0.35; // Standardwert, kann angepasst werden
 let currentBlock;
 // Erstellen des Engines
 const engine = Engine.create({
-  positionIterations: 6,
-  velocityIterations: 4,
+  positionIterations: 50,//das hier bringt was aber ist immer noch Müll
+  velocityIterations: 50,
   constraintIterations: 2,
 });
 engine.world.gravity.y = fallSpeed; // Anpassen der Gravitation
@@ -187,12 +187,12 @@ function createBlock(type) {
   const blockWidth = 40;
   const blockHeight = 40;
   let parts = [];
-  const friction = 0;
+  const friction = 1;
   const strokeColor = "black";
 
   switch (type) {
     case "square":
-      console.log("Square-Block");
+      // //console.log("Square-Block");
       parts = [
         // Bodies.rectangle(x, y, blockHeight * 2, blockWidth * 2)
         Bodies.rectangle(x, y, blockWidth, blockWidth, {
@@ -236,7 +236,7 @@ function createBlock(type) {
       ];
       break;
     case "line":
-      console.log("Line-Block");
+      //console.log("Line-Block");
       parts = [
         Bodies.rectangle(x, y, blockWidth, blockHeight * 4, {
           friction: friction,
@@ -270,7 +270,7 @@ function createBlock(type) {
       ];
       break;
     case "reverse-l-block":
-      console.log("Reverse-L-Block");
+      //console.log("Reverse-L-Block");
       parts = [
         // Basis des L-Blocks
         Bodies.rectangle(x, y, blockWidth, blockHeight * 3, {
@@ -312,7 +312,7 @@ function createBlock(type) {
       ];
       break;
     case "l-block":
-      console.log("L-Block");
+      //console.log("L-Block");
       parts = [
         Bodies.rectangle(x, y, blockWidth, blockHeight * 3, {
           friction: friction,
@@ -353,7 +353,7 @@ function createBlock(type) {
       ];
       break;
     case "t-block":
-      console.log("T-Block");
+      //console.log("T-Block");
       parts = [
         // Basis des T-Blocks
         Bodies.rectangle(x, y, blockWidth * 3, blockHeight, {
@@ -387,15 +387,14 @@ function createBlock(type) {
       ];
       break;
     case "test-block":
-      console.log("Test-Block");
+      //console.log("Test-Block");
       parts = [Bodies.rectangle(x, y, blockWidth, blockWidth)];
       break;
     case "special-block":
       parts = [
         Bodies.rectangle(x, y, platformWidth / 2, blockHeight, {
+          friction: friction,
           render: {
-            lineWidth: 3,
-            strokeStyle: "white",
             sprite: { texture: "hfg2.svg" },
           },
         }),
@@ -406,6 +405,7 @@ function createBlock(type) {
   const block = Body.create({
     parts: parts,
     isStatic: false,
+    sleepThreshold: Infinity
   });
 
   block.isControllable = true;
@@ -436,7 +436,7 @@ function spawnFlyingBlocks(numberOfBlocks) {
     const speed = Math.random() * 5 * (i % 2 === 0 ? 2 : -2); // Geschwindigkeit nach rechts oder links
 
     const colorIndex = Math.round(Math.random() * randomColorArray.length - 1);
-    // console.log(colorIndex);
+    // //console.log(colorIndex);
 
     const nichtBlock = Bodies.rectangle(x, y, 40, 40, {
       render: { fillStyle: randomColorArray[colorIndex] },
@@ -477,10 +477,28 @@ function loopFunction() {
     setTimeout(loopFunction, 300); // Setze den Loop alle 5 Sekunden fort
   }
 }
+function getBlockDimensions(block) {
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
 
+  block.parts.forEach(part => {
+      minX = Math.min(minX, part.bounds.min.x);
+      maxX = Math.max(maxX, part.bounds.max.x);
+      minY = Math.min(minY, part.bounds.min.y);
+      maxY = Math.max(maxY, part.bounds.max.y);
+  });
+
+  const width = maxX - minX;
+  const height = maxY - minY;
+
+  return { width, height };
+}
 // Globale Variable, um das Block-Spawning zu steuern
 let spawnBlocks = true;
-// console.log(spawnBlocks);
+// let newBlock;
+// //console.log(spawnBlocks);
 // Kollisionserkennung
 Events.on(engine, "collisionStart", (event) => {
   event.pairs.forEach((pair) => {
@@ -489,13 +507,29 @@ Events.on(engine, "collisionStart", (event) => {
         block.parts.some((part) => part === pair.bodyA || part === pair.bodyB)
       ) {
         if (block.customtype === "special-block" && !block.hasCollided) {
-          block.isStatic = true; // Macht den "special-block" statisch bei Kollision
-          block.isControllable = false;
-          Body.setPosition(block, {
-            x: block.position.x,
-            y: block.position.y - 11,
+          // Speichern der aktuellen Position und Eigenschaften
+          const { x, y } = block.position;
+          const dimensions = getBlockDimensions(block);
+          // console.log(dimensions.width, dimensions.height);
+
+          // Entfernen des aktuellen Blocks
+          World.remove(engine.world, block);
+          blocks.splice(index, 1);
+
+          // Erstellen und Hinzufügen des neuen statischen Blocks
+          const newBlock = Bodies.rectangle(x, y, dimensions.width, dimensions.height, {
+            isStatic: true,
+            render: {sprite: {texture: "hfg2.svg"}}
+            // Weitere Eigenschaften kopieren
           });
-          // console.log("special Block hit");
+
+          newBlock.hasCollided = true;
+          newBlock.isControllable = false;
+          newBlock.customtype = "special-block";
+          newBlock.mass = 50;
+          World.add(engine.world, newBlock);
+          blocks.push(newBlock);
+          // console.log(blocks);
         }
         if (pair.bodyA === ground || pair.bodyB === ground) {
           // Logik für Kollision mit dem Boden
@@ -503,9 +537,7 @@ Events.on(engine, "collisionStart", (event) => {
           blocks.splice(index, 1); // Entfernen des Blocks aus der Liste
 
           if (block === currentBlock) {
-            // console.log(
-            //   "Ein fallender Block hat den Boden berührt und wurde entfernt."
-            // );
+            // console.log("Ein fallender Block hat den Boden berührt und wurde entfernt.");
             if (spawnBlocks) {
               currentBlock = createRandomBlock(); // Erzeugen eines neuen Blocks
             }
@@ -519,7 +551,7 @@ Events.on(engine, "collisionStart", (event) => {
             block.isControllable = false; // Block nach 1 Sekunde nicht mehr steuerbar machen
 
             if (block === currentBlock && spawnBlocks) {
-              console.log("Ein fallender Block hat die Plattform berührt.");
+              // console.log("Ein fallender Block hat die Plattform berührt.");
               currentBlock = createRandomBlock(); // Neuen Block nach 1 Sekunde spawnen
             }
           }, 200);
@@ -540,9 +572,10 @@ Events.on(engine, "collisionStart", (event) => {
 
         if (
           pair.bodyA !== ground &&
-          pair.bodyA !== ground &&
-          pair.bodyA != axis &&
-          pair.bodyB != axis
+          pair.bodyA !== ground 
+          // &&
+          // pair.bodyA != axis &&
+          // pair.bodyB != axis
           // pair.bodyA !== leftWall &&
           // pair.bodyA !== rightWall &&
           // pair.bodyB !== leftWall &&
@@ -556,7 +589,7 @@ Events.on(engine, "collisionStart", (event) => {
               )
             ) {
               block.hasCollided = true; // Setze die Kollisionsflagge
-              // console.log("Zwei Blöcke haben kollidiert.");
+              //console.log("Zwei Blöcke haben kollidiert.");
               // Führen Sie hier die gewünschte Aktion aus
               // Zum Beispiel: Deaktivieren der Steuerbarkeit beider Blöcke
               if (block.position.y <= 20) {
@@ -596,7 +629,7 @@ function test(value, startLow, startHigh, endLow, endHigh, reverse) {
   } else if (cache > canvasWidth) {
     cache = canvasWidth;
   }
-  // console.log("Cache:", cache);
+  // //console.log("Cache:", cache);
   return cache;
 }
 
@@ -606,10 +639,10 @@ let spawnTimer = null;
 
 function updateBlockPosition() {
   if (currentBlock && currentBlock.isControllable) {
-    // console.log("Yes");
+    // //console.log("Yes");
     const palmCenter =
       canvasWidth - test(palmBaseCenterX, 0, 1, 0, canvasWidth, false);
-    // console.log("palmBaseCenterX:", palmCenter);
+    // //console.log("palmBaseCenterX:", palmCenter);
     // Verwenden Sie die Handposition, um die X-Position des Blocks zu setzen
     Body.setPosition(currentBlock, {
       x: palmCenter,
@@ -624,7 +657,7 @@ function updateBlockPosition() {
       clearTimeout(spawnTimer);
       spawnTimer = setTimeout(() => {
         resetGame();
-        // console.log("Blockspawning deaktiviert.");
+        // //console.log("Blockspawning deaktiviert.");
       }, 7000); // 10 Sekunden
     }
     if (thumbDown) {
@@ -679,7 +712,7 @@ let thumbCheck = false;
 (function run() {
   Engine.update(engine, 1000 / 60);
   Render.world(render);
-  //   console.log(actualise);
+  //   //console.log(actualise);
   if (actualise) {
     updateBlockPosition(); // Aktualisiert die Position des Blocks basierend auf der Handposition
     updateBlockRotation();
@@ -722,14 +755,14 @@ function calculateTowerHeightInBlocks() {
   });
 
   if (highestBlock) {
-    // console.log("Test-Start")
-    // console.log(highestBlock.position.y);
-    // console.log(platformHeight);
-    // console.log(canvasHeight);
+    // //console.log("Test-Start")
+    // //console.log(highestBlock.position.y);
+    // //console.log(platformHeight);
+    // //console.log(canvasHeight);
     const highestY = highestBlock.position.y;
-    // console.log(highestY);
+    // //console.log(highestY);
     const towerHeight = canvasHeight - platformHeight - highestY + 17;
-    // console.log(towerHeight);
+    // //console.log(towerHeight);
     // Teilen Sie die Gesamthöhe durch die Höhe eines Blocks
     const heightInBlocks = towerHeight / blockHeight / 2;
     return Math.round(heightInBlocks);

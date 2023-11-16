@@ -291,7 +291,7 @@ async function predictWebcam() {
     const middleFingerRaised = checkMiddleFingerRaised(results.landmarks[0]);
 
     if (middleFingerRaised) {
-      console.log(timerStarted);
+      // console.log(timerStarted);
       if (!timerStarted) {
         middleFingerRaiseStart = Date.now();
         // console.log(middleFingerRaiseStart);
@@ -408,10 +408,10 @@ function handleGameLogic() {
 
   // Bewegungen handhaben
   if (currentMovement === "right") {
-    console.log("right");
+    // console.log("right");
     moveBlockRight();
   } else if (currentMovement === "left") {
-    console.log("left");
+    // console.log("left");
     moveBlockLeft();
   }
 }
