@@ -132,8 +132,31 @@ axisContext.fillText("45", axisX - 25, 20);
 let blocks = [];
 
 // Liste der möglichen Blocktypen
-const blockTypes = ["square", "line", "l-block", "t-block", "reverse-l-block"];
-
+const blockTypes = [
+  "square",
+  "square",
+  "square",
+  "square", // 4x square
+  "line",
+  "line",
+  "line",
+  "line", // 4x line
+  "l-block",
+  "l-block",
+  "l-block",
+  "l-block", // 4x l-block
+  "t-block",
+  "t-block",
+  "t-block",
+  "t-block", // 4x t-block
+  "reverse-l-block",
+  "reverse-l-block",
+  "reverse-l-block",
+  "reverse-l-block", // 4x reverse-l-block
+  "special-block", // 1x special-block
+  "special-block", // 1x special-block
+  "special-block", // 1x special-block
+];
 // Funktion, um zufällig einen Blocktyp auszuwählen
 function getRandomBlockType() {
   const randomIndex = Math.floor(Math.random() * blockTypes.length);
@@ -142,13 +165,13 @@ function getRandomBlockType() {
 
 // Modifizierte Funktion zum Erstellen eines neuen Blocks
 function createRandomBlock() {
-  // const blockType = getRandomBlockType();
+  const blockType = getRandomBlockType();
   // const blockType = "square";
   // const blockType = "line";
   // const blockType = "l-block";
   // const blockType = "reverse-l-block";
   // const blockType = 't-block';
-  const blockType = "special-block";
+  // const blockType = "special-block";
   return createBlock(blockType);
 }
 
@@ -365,7 +388,11 @@ function createBlock(type) {
     case "special-block":
       parts = [
         Bodies.rectangle(x, y, platformWidth / 2, blockHeight, {
-          render: { fillStyle: "red" },
+          render: {
+            lineWidth: 3,
+            strokeStyle: "white",
+            sprite: { texture: "hfg2.svg" },
+          },
         }),
       ];
       break;
@@ -378,7 +405,8 @@ function createBlock(type) {
 
   block.isControllable = true;
   block.hasCollided = false;
-  block.mass = 100;
+  block.customtype = type;
+  block.mass = 50;
   World.add(engine.world, [block]);
   blocks.push(block);
   return block;
@@ -443,23 +471,6 @@ function loopFunction() {
   }
 }
 
-// Funktion aufrufen, um beispielsweise 10 Blöcke zu generieren
-// spawnFlyingBlocks(10);
-
-document.addEventListener("keydown", (event) => {
-  // if (!currentBlock.isControllable) return;
-
-  const { keyCode } = event;
-  switch (keyCode) {
-    case 37: // Linke Pfeiltaste
-      updateDemoBlocks();
-      break;
-  }
-});
-
-// Erster Block
-// let currentBlock = createRandomBlock();
-
 // Globale Variable, um das Block-Spawning zu steuern
 let spawnBlocks = true;
 // console.log(spawnBlocks);
@@ -470,6 +481,15 @@ Events.on(engine, "collisionStart", (event) => {
       if (
         block.parts.some((part) => part === pair.bodyA || part === pair.bodyB)
       ) {
+        if (block.customtype === "special-block" && !block.hasCollided) {
+          block.isStatic = true; // Macht den "special-block" statisch bei Kollision
+          block.isControllable = false;
+          Body.setPosition(block, {
+            x: block.position.x,
+            y: block.position.y - 11,
+          });
+          // console.log("special Block hit");
+        }
         if (pair.bodyA === ground || pair.bodyB === ground) {
           // Logik für Kollision mit dem Boden
           World.remove(engine.world, block); // Entfernen des Blocks
@@ -499,7 +519,7 @@ Events.on(engine, "collisionStart", (event) => {
 
           // Überprüfen, ob die Höhe des Blocks 20 oder darunter ist
           if (block.position.y <= 20) {
-            spawnBlocks = false; // Deaktivieren des Block-Spawnings
+            resetGame(); // Deaktivieren des Block-Spawnings
           }
 
           // Hier die masse ändern;
@@ -596,11 +616,6 @@ function updateBlockPosition() {
       // Timer zurücksetzen
       clearTimeout(spawnTimer);
       spawnTimer = setTimeout(() => {
-        setTimeout(() => {
-          document.getElementById("gifBox").style.display = "block";
-          document.getElementById("gifBox2").style.display = "block";
-        }, 2000);
-        startStopLoop();
         resetGame();
         console.log("Blockspawning deaktiviert.");
       }, 7000); // 10 Sekunden
@@ -620,6 +635,20 @@ function resetGame() {
   spawnBlocks = false;
   wasGestureRecognized2 = false;
   platform.isStatic = false;
+
+  setTimeout(() => {
+    document.getElementById("gifBox").style.display = "block";
+    document.getElementById("gifBox2").style.display = "block";
+    startStopLoop();
+  }, 2000);
+
+  blocks.forEach((block) => {
+    // Prüfen, ob es sich um einen 'special-block' handelt
+    if (block.customtype === "special-block") {
+      block.isStatic = false; // Setze isStatic zurück
+      // World.remove(engine.world, block); // Entferne den Block aus der Welt
+    }
+  });
   // stump.isStatic = false;
 }
 
@@ -640,6 +669,7 @@ function updateBlockRotation() {
 let thumbCheck = false;
 // Ihre Animationsschleife
 (function run() {
+  updateViewport();
   Engine.update(engine, 1000 / 60);
   Render.world(render);
   //   console.log(actualise);
@@ -663,13 +693,6 @@ let thumbCheck = false;
 
   requestAnimationFrame(run);
 })();
-
-setInterval(() => {
-  // console.log("");
-  // console.log("victory:", victory);
-  // console.log("wasGestureRecognized2:", wasGestureRecognized2);
-  // console.log("spawnBlocks:", spawnBlocks);
-}, 2000);
 
 let stackedBlocksCount = 0;
 
@@ -705,8 +728,8 @@ function drawStackCount() {
   const ctx = render.context;
   ctx.fillStyle = "white";
   ctx.font = "25px Arial";
-  ctx.textAlign = "center";
-  ctx.fillText(`${calculateTowerHeightInBlocks()}`, canvasWidth - 70, 30);
+  ctx.textAlign = "right";
+  ctx.fillText(`${calculateTowerHeightInBlocks()}`, canvasWidth - 10, 30);
   ctx.font = "16px Arial";
   ctx.textAlign = "center";
   ctx.fillText(`Gestapelte Blöcke`, canvasWidth - 70, 50);
@@ -717,3 +740,25 @@ function drawStackCount() {
 
   requestAnimationFrame(run);
 })();
+
+function updateViewport() {
+  const towerHeight = calculateTowerHeightInBlocks() * blockHeight;
+  const offset = 300;
+
+  console.log("Aktuelle Turmhöhe:", towerHeight);
+  console.log("Viewport vor Update:", render.bounds.min.y, render.bounds.max.y);
+
+  if (canvasHeight - towerHeight < offset) {
+    render.bounds.min.y = towerHeight + offset - canvasHeight;
+    render.bounds.max.y = towerHeight + offset;
+  } else {
+    render.bounds.min.y = 0;
+    render.bounds.max.y = canvasHeight;
+  }
+
+  console.log(
+    "Viewport nach Update:",
+    render.bounds.min.y,
+    render.bounds.max.y
+  );
+}
