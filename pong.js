@@ -474,7 +474,7 @@ function startStopLoop() {
 function loopFunction() {
   if (isLoopRunning) {
     spawnFlyingBlocks(10); // Erzeuge 10 fliegende Blöcke
-    setTimeout(loopFunction, 150); // Setze den Loop alle 5 Sekunden fort
+    setTimeout(loopFunction, 300); // Setze den Loop alle 5 Sekunden fort
   }
 }
 
@@ -689,8 +689,7 @@ let thumbCheck = false;
     //   nichtBlock.isSleeping = true;
     // });
     blocks.forEach((block) => {
-      block.hasCollided = true;
-      block.isSensor = true;
+      World.remove(engine.world, block);
     });
     blocks = [];
     spawnBlocks = true;
