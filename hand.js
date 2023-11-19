@@ -127,6 +127,7 @@ async function handleClick(event) {
   ********************************************************************/
 
 const video = document.getElementById("webcam");
+video.style.transform = "rotate(90deg)";
 const canvasElement = document.getElementById("output_canvas");
 const canvasCtx = canvasElement.getContext("2d");
 const gestureOutput = document.getElementById("gesture_output");

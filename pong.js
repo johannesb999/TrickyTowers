@@ -6,7 +6,7 @@ let fallSpeed = 0.35; // Standardwert, kann angepasst werden
 let currentBlock;
 // Erstellen des Engines
 const engine = Engine.create({
-  positionIterations: 50,//das hier bringt was aber ist immer noch Müll
+  positionIterations: 50, //das hier bringt was aber ist immer noch Müll
   velocityIterations: 50,
   constraintIterations: 2,
 });
@@ -31,7 +31,7 @@ const groundHeight = 60;
 // Größe und Position der Plattform
 const platformWidth = canvasWidth / 2;
 const platformHeight = 30; // Angenommene Dicke der Plattform
-const blockHeight = 20; // Angenommene Höhe eines Blocks
+const blockHeight = 40; // Angenommene Höhe eines Blocks
 const platformY =
   canvasHeight - 2 * blockHeight - groundHeight / 2 + platformHeight / 4;
 
@@ -405,13 +405,13 @@ function createBlock(type) {
   const block = Body.create({
     parts: parts,
     isStatic: false,
-    sleepThreshold: Infinity
+    sleepThreshold: Infinity,
   });
 
   block.isControllable = true;
   block.hasCollided = false;
   block.customtype = type;
-  block.mass = 50;
+  block.mass = 5;
   World.add(engine.world, [block]);
   blocks.push(block);
   return block;
@@ -483,11 +483,11 @@ function getBlockDimensions(block) {
   let minY = Infinity;
   let maxY = -Infinity;
 
-  block.parts.forEach(part => {
-      minX = Math.min(minX, part.bounds.min.x);
-      maxX = Math.max(maxX, part.bounds.max.x);
-      minY = Math.min(minY, part.bounds.min.y);
-      maxY = Math.max(maxY, part.bounds.max.y);
+  block.parts.forEach((part) => {
+    minX = Math.min(minX, part.bounds.min.x);
+    maxX = Math.max(maxX, part.bounds.max.x);
+    minY = Math.min(minY, part.bounds.min.y);
+    maxY = Math.max(maxY, part.bounds.max.y);
   });
 
   const width = maxX - minX;
@@ -517,11 +517,17 @@ Events.on(engine, "collisionStart", (event) => {
           blocks.splice(index, 1);
 
           // Erstellen und Hinzufügen des neuen statischen Blocks
-          const newBlock = Bodies.rectangle(x, y, dimensions.width, dimensions.height, {
-            isStatic: true,
-            render: {sprite: {texture: "hfg2.svg"}}
-            // Weitere Eigenschaften kopieren
-          });
+          const newBlock = Bodies.rectangle(
+            x,
+            y,
+            dimensions.width,
+            dimensions.height,
+            {
+              isStatic: true,
+              render: { sprite: { texture: "hfg2.svg" } },
+              // Weitere Eigenschaften kopieren
+            }
+          );
 
           newBlock.hasCollided = true;
           newBlock.isControllable = false;
@@ -572,7 +578,7 @@ Events.on(engine, "collisionStart", (event) => {
 
         if (
           pair.bodyA !== ground &&
-          pair.bodyA !== ground 
+          pair.bodyA !== ground
           // &&
           // pair.bodyA != axis &&
           // pair.bodyB != axis
@@ -670,6 +676,7 @@ function updateBlockPosition() {
     }
   }
 }
+let scoreboard = [];
 function resetGame() {
   // createDemoBlocks(true);
   spawnBlocks = false;
@@ -690,6 +697,9 @@ function resetGame() {
       // World.remove(engine.world, block); // Entferne den Block aus der Welt
     }
   });
+  thumbCheck = false;
+  scoreboard.push(highscore);
+  console.log(scoreboard);
   // stump.isStatic = false;
 }
 
@@ -697,7 +707,11 @@ let wasGestureRecognized = false;
 let wasGestureRecognized2 = false;
 
 function updateBlockRotation() {
-  if (currentBlock && currentBlock.isControllable) {
+  if (
+    currentBlock &&
+    currentBlock.isControllable &&
+    currentBlock.customtype != "special-block"
+  ) {
     if (fist && !wasGestureRecognized) {
       // Drehen des Blocks um 90° im Uhrzeigersinn
       Body.rotate(currentBlock, -Math.PI / 2);
@@ -734,8 +748,9 @@ let thumbCheck = false;
     victory = false;
   }
   if (thumbUp && !thumbCheck) {
-    // resetGame();
     thumbCheck = true;
+    // startStopLoop();
+    // resetGame();
   }
 
   requestAnimationFrame(run);
@@ -770,13 +785,14 @@ function calculateTowerHeightInBlocks() {
 
   return 0;
 }
-
+let highscore;
 function drawStackCount() {
   const ctx = render.context;
   ctx.fillStyle = "white";
   ctx.font = "25px Arial";
   ctx.textAlign = "right";
-  ctx.fillText(`${calculateTowerHeightInBlocks()}`, canvasWidth - 10, 30);
+  highscore = calculateTowerHeightInBlocks();
+  ctx.fillText(`${highscore}`, canvasWidth - 10, 30);
   ctx.font = "16px Arial";
   ctx.textAlign = "center";
   ctx.fillText(`Gestapelte Blöcke`, canvasWidth - 70, 50);
