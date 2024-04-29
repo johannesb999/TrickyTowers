@@ -422,7 +422,7 @@ function thumbs_domwn() {
 }
 
 function thumbsUp() {
-  // console.log("Johannes ist dumm");
+  thumbUp = true;
 }
 
 function openPalmAction() {
