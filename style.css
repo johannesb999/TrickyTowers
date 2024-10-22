@@ -6,16 +6,15 @@ html {
 
 #gifBox2 {
   position: absolute;
-  top: 40dvh;
-  left: 7dvw;
-  /* 1300 */
+  top: 40%;
+  left: 7%;
   transform: scaleX(-1);
 }
 
 #gifBox {
   position: absolute;
-  top: 65dvh;
-  left: 7dvw;
+  top: 65%;
+  left: 7%;
   transform: scaleX(-1);
 }
 
@@ -45,15 +44,15 @@ html {
 #anweisung {
   color: white;
   position: absolute;
-  top: 80dvh;
-  left: 9dvw;
+  top: 85%;
+  left: 9%;
   font-size: 24px;
 }
 
 #anweisung2 {
   color: white;
   position: absolute;
-  top: 85dvh;
-  left: 7dvw;
+  top: 90%;
+  left: 7%;
   font-size: 24px;
 }
