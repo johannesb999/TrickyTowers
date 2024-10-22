@@ -27,11 +27,11 @@ const render = Render.create({
 });
 
 // Dicke des Bodens
-const groundHeight = 60;
+const groundHeight = 30;
 // Größe und Position der Plattform
 const platformWidth = canvasWidth / 2;
-const platformHeight = 30; // Angenommene Dicke der Plattform
-const blockHeight = 40; // Angenommene Höhe eines Blocks
+const platformHeight = 10; // Angenommene Dicke der Plattform
+const blockHeight = 15; // Angenommene Höhe eines Blocks
 const platformY =
   canvasHeight - 2 * blockHeight - groundHeight / 2 + platformHeight / 4;
 
@@ -158,9 +158,12 @@ const blockTypes = [
   "reverse-l-block",
   "reverse-l-block", // 4x reverse-l-block
   "special-block", // 1x special-block
-  // "special-block", // 1x special-block
-  // "special-block", // 1x special-block
-  // "special-block", // 1x special-block
+  "special-block", // 1x special-block
+  "special-block", // 1x special-block
+  "special-block", // 1x special-block
+  "special-block", // 1x special-block
+  "special-block", // 1x special-block
+  "special-block", // 1x special-block
 ];
 // Funktion, um zufällig einen Blocktyp auszuwählen
 function getRandomBlockType() {
@@ -184,8 +187,8 @@ function createRandomBlock() {
 function createBlock(type) {
   const x = 400;
   const y = 0;
-  const blockWidth = 40;
-  const blockHeight = 40;
+  const blockWidth = 24;
+  const blockHeight = 24;
   let parts = [];
   const friction = 1;
   const strokeColor = "black";
@@ -438,7 +441,7 @@ function spawnFlyingBlocks(numberOfBlocks) {
     const colorIndex = Math.round(Math.random() * randomColorArray.length - 1);
     // //console.log(colorIndex);
 
-    const nichtBlock = Bodies.rectangle(x, y, 40, 40, {
+    const nichtBlock = Bodies.rectangle(x, y, 24, 24, {
       render: { fillStyle: randomColorArray[colorIndex] },
       isSensor: true,
       // isSleeping: true,
@@ -789,11 +792,11 @@ let highscore;
 function drawStackCount() {
   const ctx = render.context;
   ctx.fillStyle = "white";
-  ctx.font = "25px Arial";
+  ctx.font = "20px Arial";
   ctx.textAlign = "right";
   highscore = calculateTowerHeightInBlocks();
   ctx.fillText(`${highscore}`, canvasWidth - 10, 30);
-  ctx.font = "16px Arial";
+  ctx.font = "14px Arial";
   ctx.textAlign = "center";
   ctx.fillText(`Gestapelte Blöcke`, canvasWidth - 70, 50);
 }

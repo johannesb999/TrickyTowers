@@ -6,22 +6,21 @@ html {
 
 #gifBox2 {
   position: absolute;
-  top: 1050px;
+  top: 40dvh;
+  left: 7dvw;
   /* 1300 */
-  left: 280px;
   transform: scaleX(-1);
 }
 
 #gifBox {
   position: absolute;
-  top: 600px;
-  /* 700 */
-  left: 290px;
+  top: 65dvh;
+  left: 7dvw;
   transform: scaleX(-1);
 }
 
 #DasHierIstImmerNochWerbung {
-  width: 200px;
+  width: 150px;
   height: auto;
   position: absolute;
   top: 30px;
@@ -39,22 +38,22 @@ html {
 #Nils {
   display: none;
   position: absolute;
-  width: 1080px;
+  width: 392px;
   height: auto;
 }
 
 #anweisung {
   color: white;
   position: absolute;
-  top: 1500px;
-  left: 450px;
-  font-size: 40px;
+  top: 80dvh;
+  left: 9dvw;
+  font-size: 24px;
 }
 
 #anweisung2 {
   color: white;
   position: absolute;
-  top: 1555px;
-  left: 400px;
-  font-size: 40px;
+  top: 85dvh;
+  left: 7dvw;
+  font-size: 24px;
 }
