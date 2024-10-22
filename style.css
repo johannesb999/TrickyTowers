@@ -3,6 +3,7 @@ html {
   font-family: "Inter", sans-serif;
   /* font-family: "Titillium Web", sans-serif; */
 }
+
 #gifBox2 {
   position: absolute;
   top: 1050px;
@@ -41,6 +42,7 @@ html {
   width: 1080px;
   height: auto;
 }
+
 #anweisung {
   color: white;
   position: absolute;
@@ -48,6 +50,7 @@ html {
   left: 450px;
   font-size: 40px;
 }
+
 #anweisung2 {
   color: white;
   position: absolute;
@@ -55,17 +58,3 @@ html {
   left: 400px;
   font-size: 40px;
 }
-/* #anweisung {
-  color: white;
-  position: absolute;
-  top: 170px;
-  left: 30px;
-  font-size: 80px;
-}
-#anweisung2 {
-  color: white;
-  position: absolute;
-  top: 250px;
-  left: 30px;
-  font-size: 80px;
-} */
