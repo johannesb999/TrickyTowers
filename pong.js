@@ -26,7 +26,6 @@ const render = Render.create({
   },
 });
 
-console.log("running")
 // Dicke des Bodens
 const groundHeight = 30;
 // Größe und Position der Plattform
