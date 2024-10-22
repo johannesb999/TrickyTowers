@@ -1,17 +1,11 @@
-# Verwende das offizielle Nginx Image aus dem Alpine-Repository
-FROM nginx:stable-alpine
+# Basis-Image für den Nginx Webserver verwenden
+FROM nginx:alpine
 
-# Setze das Arbeitsverzeichnis im Container
-WORKDIR /usr/share/nginx/html
+# Kopiere alle Dateien des aktuellen Verzeichnisses in das Standardverzeichnis von Nginx
+COPY . /usr/share/nginx/html
 
-# Lösche alle bestehenden Dateien in diesem Verzeichnis
-RUN rm -rf ./*
-
-# Kopiere die HTML-Dateien aus deinem Projektverzeichnis in den Container
-COPY . .
-
-# Gib den Port 80 frei, um auf den Webserver zugreifen zu können
+# Standardmäßig nutzt Nginx Port 80
 EXPOSE 80
 
-# Starte den Nginx-Webserver
+# Starte den Nginx-Server
 CMD ["nginx", "-g", "daemon off;"]
